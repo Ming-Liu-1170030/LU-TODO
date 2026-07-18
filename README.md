@@ -1,59 +1,22 @@
-# Login Example v2.1.0 (5 July 2026)
+# LU-TODO
 
-This sample app demonstrates a simple login system that allows users to
-register, log in, and view pages specific to their user role. Those pages don't
-really do anything: it's just a simplified example to share some basic tools
-and techniques you might need when building a real-world login system.
+Individual Project for COMP639 at Lincoln University.
 
-There are three user roles in this system:
-- **Customer**
-- **Staff**
-- **Admin**
+## Running Locally
 
-Anyone who registers via the app will be a **Customer**. The only way to create
-**Staff** or **Admin** accounts in this simple app is to insert them directly
-into the database. Hey, we didn't say this app was complete!
+Instructions will be added during development.
 
-## Getting this Example Running
+## Database Setup
 
-To run the example yourself, you'll need to:
+Instructions will be added during development.
 
-1. Open the project in Visual Studio Code.
-2. Create yourself a virtual environment.
-3. Install all of the packages listed in [requirements.txt](requirements.txt)
-   (Visual Studio will offer to do this for you during step 2).
-4. Create a **loginexample** database in PostgreSQL.
+## GenAI Acknowledgement
 
-   For example, from the Windows command line:\
-   ```createdb -U postgres loginexample```
-5. Run the [Database Creation Script](create_database.sql) on your
-   **loginexample** database to create the necessary ***users*** table.
+OpenAI ChatGPT/Codex was used to explain the assessment requirements,
+development workflow, database setup, and deployment process.
+Prompts and details will be documented here.
 
-   For example, from the Windows command line:\
-   ```psql -U postgres -d loginexample -f create_database.sql``` 
-6. Use the [Database Population Script](populate_database.sql) to populate
-   the **loginexample** ***users*** table with example users.
 
-   For example, from the Windows command line:\
-   ```psql -U postgres -d loginexample -f populate_database.sql``` 
-7. Modify [connect.py](loginapp/connect.py) with the connection details for
-   your local database server.
-8. Run [The Python/Flask application](run.py).
-
-At that point, you should be able to register yourself a new **customer**
-account or log in using one of the **customer**, **staff**, or **admin**
-accounts listed in the [Database Population Script](populate_database.sql).
-
-Enjoy!
-
-## Database Scripts
-
-While we're talking about the database, you should take a look at:
-- [PostgreSQL script to create the necessary table](create_database.sql)
-- [PostgreSQL script to populate the database with users](populate_database.sql)
-- [Python script to create password hashes](password_hash_generator.py)
-
-What's that third one? Well, for that we need to talk about...
 
 ## Passwords
 
