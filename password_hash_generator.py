@@ -32,11 +32,11 @@ flask_bcrypt = Bcrypt(app)
 
 # Replace the example UserAccount objects below with the initial user accounts
 # for your own web app. You can add as many as you need to the list.
-users = [UserAccount('user1', 'customer1pass'), 
-         UserAccount('user2', 'customer2pass'),
-         UserAccount('staff1', 'staff1pass'),
-         UserAccount('staff2', 'staff2pass'),
-         UserAccount('admin1', 'admin1pass')]
+users = [
+    UserAccount('student01@lincolnuni.ac.nz', 'Student01!Pass'),
+    UserAccount('staff01@lincoln.ac.nz', 'Staff01!Pass'),
+    UserAccount('admin01@lincoln.ac.nz', 'Admin01!Pass')
+]
 
 print('Username | Password | Hash | Password Matches Hash')
 

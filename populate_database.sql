@@ -1,7 +1,37 @@
-INSERT INTO users (username, password_hash, email, user_role)
+INSERT INTO users (
+	email,
+	first_name,
+	last_name,
+	position,
+	password_hash,
+	user_role,
+	status
+)
 VALUES
-	('customer1', '$2b$12$3W3b9AnL6umkIBm6THGHB.yId0/GuR/Gi7R8ZevTwR0xi3o8rrvZa', 'customer1@example.com', 'customer'),
-	('customer2', '$2b$12$6KPIL1c77kZpDXzDDRuJV.ielxGNDUIJPkxl0K5JdQoZTMrcIMBym', 'customer2@example.com', 'customer'),
-	('staff1', '$2b$12$OKt92QtCTJmhr4wqRMYZH.6lOSBUh0oGKcvaNerR2fQe6L7.ViQ0O', 'staff1@example.com', 'staff'),
-	('staff2', '$2b$12$mT8QI2wKBvpoOFZsRwaLkeuS9FS4vc6sX.GJNnNMA1EKmypk6UYGa', 'staff2@example.com', 'staff'),
-	('admin1', '$2b$12$.jUTmK8lb/4O8O3oFuHyeerUl9qs1c.slhGzpYDMJqxGnnToGPuMO', 'admin1@example.com', 'admin');
+(
+	'student01@lincolnuni.ac.nz',
+    'Andy',
+    'Liu',
+    'MAC Student',
+    '$2b$12$PMGUiNvUySaxLsLXr8TjeuNhFI4iyrMUasGDXBRGujV.BrpsubT5G',
+    'student',
+    'active'
+),
+(
+	'staff01@lincoln.ac.nz',
+    'Stuart',
+    'Wilson',
+    'Lecturer',
+    '$2b$12$ZrnZADa.SMhLJ0t5aDZe4.zO77ISyp/TOQWlMPeRdB5kWxXvXSip.',
+    'staff',
+    'active'
+),
+(
+	'admin01@lincoln.ac.nz',
+    'Olivia',
+    'Smith',
+    'Administrator',
+    '$2b$12$8GLB2doHWxAXdIyMeB8lj.680LMr4uxo0TzIWzKeHZLJKu4zIzFSe',
+    'admin',
+    'active'
+);
