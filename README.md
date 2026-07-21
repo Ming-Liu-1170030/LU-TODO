@@ -12,8 +12,7 @@ Instructions will be added during development.
 
 ## GenAI Acknowledgement
 
-OpenAI ChatGPT/Codex was used to explain the assessment requirements,
-development workflow, database setup, and deployment process.
+
 Prompts and details will be documented here.
 
 

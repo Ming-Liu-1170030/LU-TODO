@@ -9,7 +9,7 @@ import re
 flask_bcrypt = Bcrypt(app)
 
 # Default role assigned to new users upon registration.
-DEFAULT_USER_ROLE = 'customer'
+DEFAULT_USER_ROLE = 'student'
 
 def user_home_url():
     """Generates a URL to the homepage for the currently logged-in user.
