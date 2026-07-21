@@ -25,6 +25,6 @@ db.init_db(app, connect.dbuser, connect.dbpass, connect.dbhost, connect.dbname,
 
 # Include all modules that define our Flask route-handling functions.
 from lutodo import user
-from lutodo import customer
+from lutodo import student
 from lutodo import staff
 from lutodo import admin

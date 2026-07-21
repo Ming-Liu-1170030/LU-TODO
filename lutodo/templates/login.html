@@ -17,15 +17,20 @@
             </div>
             <div class="bg-white border container">
                 <form class="p-3" action="{{ url_for('login') }}" method="post">
+                  {% if account_inactive %}
+                  <div class="alert alert-danger">
+                    Your account is inactive and cannot log in.
+                  </div>
+                  {% endif %}
                   <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control{% if username_invalid %} is-invalid{% endif %}" id="username" name="username" placeholder="Enter your username..." maxlength=20 value="{{ username }}" required>
-                    <div class="invalid-feedback">Can't find your account</div>
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control{% if email_invalid %} is-invalid{% endif %}" id="email" name="email" placeholder="Enter your email..." maxlength=254 value="{{ email }}" required>
+                    <div class="invalid-feedback">No account found with this email address</div>
                   </div>
                   <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control{% if password_invalid %} is-invalid{% endif %}" id="password" name="password" placeholder="Enter your password..." required>
-                    <div class="invalid-feedback">Incorrect username or password</div>
+                    <div class="invalid-feedback">Incorrect email or password</div>
                   </div>
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary">Log In</button>

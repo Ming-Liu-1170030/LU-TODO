@@ -21,8 +21,8 @@ def user_home_url():
     if 'loggedin' in session:
         role = session.get('user_role', None)
 
-        if role=='customer':
-            home_endpoint='customer_home'
+        if role=='student':
+            home_endpoint='student_home'
         elif role=='staff':
             home_endpoint='staff_home'
         elif role=='admin':
@@ -61,9 +61,9 @@ def login():
     if 'loggedin' in session:
          return redirect(user_home_url())
 
-    if request.method=='POST' and 'username' in request.form and 'password' in request.form:
+    if request.method=='POST' and 'email' in request.form and 'password' in request.form:
         # Get the login details submitted by the user.
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
 
         # Attempt to validate the login details against the database.
@@ -76,13 +76,19 @@ def login():
             # be equally valid to put the whole SQL statement on one line like
             # we do at the beginning of the `signup` function.
             cursor.execute('''
-                           SELECT user_id, username, password_hash, user_role
+                           SELECT user_id, email, password_hash, user_role, first_name, 
+                           last_name, position, profile_picture, status 
                            FROM users
-                           WHERE username = %s;
-                           ''', (username,))
+                           WHERE email = %s;
+                           ''', (email,))
             account = cursor.fetchone()
             
             if account is not None:
+                if account['status'] == 'inactive':
+                    return render_template('login.html',
+                                           email=email,
+                                           account_inactive=True)
+
                 # We found a matching account: now we need to check whether the
                 # password they supplied matches the hash in our database.
                 password_hash = account['password_hash']
@@ -99,7 +105,7 @@ def login():
                     # match and Flask will know the session data is invalid.
                     session['loggedin'] = True
                     session['user_id'] = account['user_id']
-                    session['username'] = account['username']
+                    session['email'] = account['email']
                     session['user_role'] = account['user_role']
 
                     return redirect(user_home_url())
@@ -109,7 +115,7 @@ def login():
                     # re-enter it. We also set a `password_invalid` flag that
                     # the template uses to display a validation message.
                     return render_template('login.html',
-                                           username=username,
+                                           email=email,
                                            password_invalid=True)
             else:
                 # We didn't find an account in the database with this username.
@@ -125,8 +131,8 @@ def login():
                 # whether a username exists or not. Here, we accept that risk
                 # to provide more useful feedback to the user.
                 return render_template('login.html', 
-                                       username=username,
-                                       username_invalid=True)
+                                       email=email,
+                                       email_invalid=True)
 
     # This was a GET request, or an invalid POST (no username and/or password),
     # so we just render the login form with no pre-populated details or flags.
@@ -281,7 +287,7 @@ def logout():
     # keeping a record of active sessions on the server side).
     session.pop('loggedin', None)
     session.pop('user_id', None)
-    session.pop('username', None)
+    session.pop('email', None)
     session.pop('user_role', None)
     
     return redirect(url_for('login'))
