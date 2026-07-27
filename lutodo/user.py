@@ -1,12 +1,18 @@
+
+
 from lutodo import app
 from lutodo import db
 from flask import redirect, render_template, request, session, url_for
 from flask_bcrypt import Bcrypt
 import re
+from pathlib import Path
+from uuid import uuid4
+from werkzeug.utils import secure_filename
 
 # Create an instance of the Bcrypt class, which we'll be using to hash user
 # passwords during login and registration.
 flask_bcrypt = Bcrypt(app)
+ALLOWED_IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}
 
 # Default role assigned to new users upon registration.
 DEFAULT_USER_ROLE = 'student'
@@ -155,39 +161,58 @@ def signup():
     if 'loggedin' in session:
          return redirect(user_home_url())
     
-    if request.method == 'POST' and 'username' in request.form and 'email' in request.form and 'password' in request.form:
+    if (request.method == 'POST' 
+        and 'first_name' in request.form 
+        and 'last_name' in request.form 
+        and 'position' in request.form
+        and 'email' in request.form
+        and 'password' in request.form
+        and 'confirm_password' in request.form):
         # Get the details submitted via the form on the signup page, and store
-        # the values in temporary local variables for ease of access.
-        username = request.form['username']
-        email = request.form['email']
+        # the values in temporary local variables for ease of access. For some 
+        # of them, strip.() will be applied.
+
+        first_name = request.form['first_name'].strip()
+        last_name = request.form['last_name'].strip()
+        position = request.form['position'].strip()
+        email = request.form['email'].strip().lower()
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        profile_picture = request.files.get('profile_picture')
+        profile_picture_filename = None
 
         # We start by assuming that everything is okay. If we encounter any
         # errors during validation, we'll store an error message in one or more
         # of these variables so we can pass them through to the template.
-        username_error = None
+        first_name_error = None
+        last_name_error = None
+        position_error = None
         email_error = None
         password_error = None
+        confirm_password_error = None
+        profile_picture_error = None
 
         # Check whether there's an account with this username in the database.
         with db.get_cursor() as cursor:
-            cursor.execute('SELECT user_id FROM users WHERE username = %s;',
-                           (username,))
+            cursor.execute('SELECT user_id FROM users WHERE email = %s;',
+                           (email,))
             account_already_exists = cursor.fetchone() is not None
         
-        # Validate the username, ensuring that it's unique (as we just checked
+        # Validate the email, ensuring that it's unique (as we just checked
         # above) and meets the naming constraints of our web app.
         if account_already_exists:
-            username_error = 'An account already exists with this username.'
-        elif len(username) > 20:
-            # The user should never see this error during normal conditions,
-            # because we set a maximum length of 20 on the input field in the
-            # template. However, a user or attacker could easily override that
-            # and submit a longer value, so we need to handle that case.
-            username_error = 'Your username cannot exceed 20 characters.'
-        elif not re.match(r'[A-Za-z0-9]+', username):
-            username_error = 'Your username can only contain letters and numbers.'            
+            email_error = 'An account already exists with this email.'
 
+        # Validate first_name, last_name and all required inputs.
+        if not first_name.strip():
+            first_name_error = 'First name cannot be empty.'
+        elif len(first_name) > 50:
+            first_name_error = 'Your first name cannot exceed 50 characters.'
+        if not last_name.strip():
+            last_name_error = 'Last name cannot be empty.'
+        elif len(last_name) > 50:
+            last_name_error = 'Your last name cannot exceed 50 characters.'
+        
         # Validate the new user's email address. Note: The regular expression
         # we use here isn't a perfect check for a valid address, but is
         # sufficient for this example. The maximum length is based on RFC 3696,
@@ -198,35 +223,83 @@ def signup():
             email_error = 'Your email address cannot exceed 254 characters.'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
             email_error = 'Invalid email address.'
+        # Validate email address as required in the assessment to 
+        # make sure only uni staff or student email is accepted.
+        if email.endswith('@lincolnuni.ac.nz'):
+            user_role = 'student'
+        elif email.endswith('@lincoln.ac.nz'):
+            user_role = 'staff'
+        else:
+            email_error = 'You must use a valid Lincoln University email address.'
                 
-        # Validate password. Think about what other constraints might be useful
-        # here for security (e.g. requiring a certain mix of character types,
-        # or avoiding overly-common passwords). Make sure that you clearly
-        # communicate any rules to the user, either through hints on the signup
-        # page or with clear error messages here.
-        #
-        # Note: Unlike the username and email address, we don't enforce a
-        # maximum password length. Because we'll be storing a hash of the
-        # password in our database, and not the password itself, it doesn't
-        # matter how long a password the user chooses. Whether it's 8 or 800
-        # characters, the hash will always be the same length.
+        # Validate password. Length and content will be validated.
         if len(password) < 8:
-            password_error = 'Please choose a longer password!'
-                
-        if (username_error or email_error or password_error):
+            password_error = 'Password must be at least 8 characters long!'
+        elif not re.search(r'[A-Z]', password):
+            password_error = 'Password must contain at least one uppercase letter.'
+        elif not re.search(r'[a-z]', password):
+            password_error = 'Password must contain at least one lowercase letter.'
+        elif not re.search(r'[0-9]', password):
+            password_error = 'Password must contain at least one number (0-9).'
+        elif not re.search(r'[!@#$%^&*]', password):
+            password_error = 'Password must contain at least one special character (!@#$%^&*).'
+
+        # Password consistency validation.
+        if confirm_password != password:
+            confirm_password_error = 'The passwords do not match.'
+
+        # Profile picture name validation and save.
+        if profile_picture and profile_picture.filename:
+            safe_filename = secure_filename(profile_picture.filename)
+            extension = Path(safe_filename).suffix.lower()
+
+            if extension not in ALLOWED_IMAGE_EXTENSIONS:
+                profile_picture_error = 'Please upload a PNG, JPG, JPEG, GIF, OR WEBP image.'
+            else:
+                profile_picture_filename = f'{uuid4().hex}{extension}'
+
+        # Validate the position input.
+        if not position.strip():
+            position_error = 'Position cannot be empty.'
+        elif len(position) > 50:
+            position_error = 'Position cannot exceed 50 characters.'
+        
+
+        
+        if (first_name_error
+            or last_name_error 
+            or email_error 
+            or password_error
+            or confirm_password_error
+            or profile_picture_error
+            or position_error):
             # One or more errors were encountered, so send the user back to the
-            # signup page with their username and email address pre-populated.
             # For security reasons, we never send back the password they chose.
             return render_template('signup.html',
-                                   username=username,
+                                   first_name = first_name,
+                                   last_name = last_name,
                                    email=email,
-                                   username_error=username_error,
+                                   position = position,
+                                   first_name_error=first_name_error,
+                                   last_name_error=last_name_error,
                                    email_error=email_error,
-                                   password_error=password_error)
+                                   password_error=password_error,
+                                   confirm_password_error = confirm_password_error,
+                                   profile_picture_error = profile_picture_error,
+                                   position_error = position_error)
         else:
             # The new account details are valid. Hash the user's new password
             # and create their account in the database.
             password_hash = flask_bcrypt.generate_password_hash(password).decode()
+
+            # Save the profile_pictures that are uploaded and validated.
+            if profile_picture_filename:
+                # Create an origin tha python accepts.
+                upload_folder = Path(app.static_folder) / 'profile_pictures'
+                # Check if the folders are there.
+                upload_folder.mkdir(parents=True, exist_ok=True)
+                # Save into profile_pictures
+                profile_picture.save(upload_folder / profile_picture_filename)
             
             # Note: In this example, we just assume the SQL INSERT statement
             # below will run successfully. But what if it doesn't?
@@ -237,10 +310,25 @@ def signup():
             # with that possibility in a way that's more useful to the user.
             with db.get_cursor() as cursor:
                 cursor.execute('''
-                               INSERT INTO users (username, password_hash, email, user_role)
-                               VALUES (%s, %s, %s, %s);
+                               INSERT INTO users (
+                               first_name, 
+                               last_name,
+                               email, 
+                               password_hash, 
+                               position,
+                               profile_picture,
+                               user_role,
+                               status)
+                               VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                                ''',
-                               (username, password_hash, email, DEFAULT_USER_ROLE,))
+                               (first_name,
+                                last_name, 
+                                email, 
+                                password_hash,
+                                position,
+                                profile_picture_filename,
+                                user_role,
+                                'active',))
             
             # Now that registration is complete, send the user back to the
             # signup page. We set the `signup_successful` flag to display a

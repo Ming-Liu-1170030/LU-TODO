@@ -2,3 +2,4 @@
 __pycache__/
 *.py[cod]
 lutodo/connect.py
+lutodo/static/profile_pictures/

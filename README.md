@@ -12,10 +12,39 @@ Instructions will be added during development.
 
 ## GenAI Acknowledgement
 
+I have used OpenAI Codex during the development and the details are documented as follows:
 
-Prompts and details will be documented here.
+### Date used: 26 July 2026
+
+* 1. Prompts:
+
+- Help me check my 'signup' html page and show me the errors.
+- What does multipart/form-data mean?
 
 
+* Other input provided: 
+
+And I upload my written signup.html to Codex.
+
+* How it is used?
+
+A suggestion of missing 'multipart/form-data' is provided by Codex, and I ask what that means and hear back and know that helps to submit image profile picture then I 
+add it to my signup.html page.
+
+
+* 2. Prompts:
+
+- How can I deal with the profile_picture users uploaded?
+
+
+* Other input provided: 
+
+How can I save the validated pictures into my static folder?
+
+
+* How it is used?
+
+I was suggested to import pathlib, uuid and werkzug.utils first, and allow the extensions of types of pictures. And I was suggested to build a static file for the future profile pictures. After that, I was suggested to check the index to see if is accepted and if so, a random number index should be generated for the following use.
 
 ## Passwords
 

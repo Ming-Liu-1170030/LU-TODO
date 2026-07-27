@@ -11,27 +11,47 @@
     
     <div class="container">
       <div class="row vh-100 align-items-center justify-content-center">
-        <div class="col-md-auto col-lg-5 col-xl-4">
+        <div class="col-md-auto col-lg-5 col-xl-5">
             <div class="bg-primary text-white border border-bottom-0 rounded-top text-center">
                 <h1 class="p-3 m-0">Sign up</h1>
             </div>
             <div class="bg-white border container">
-                <form class="p-3" action="{{ url_for('signup') }}" method="post">
+                <form class="p-3" action="{{ url_for('signup') }}" method="post" enctype="multipart/form-data">
                   <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control{% if username_error %} is-invalid{% endif %}" id="username" name="username" placeholder="Choose a username..." maxlength=20 value="{{ username }}" required>
-                    <div class="invalid-feedback">{{ username_error }}</div>
+                    <label for="first_name" class="form-label">First Name</label>
+                    <input type="text" class="form-control{% if first_name_error %} is-invalid{% endif %}" id="first_name" name="first_name" placeholder="Enter your first name..." maxlength=50 value="{{ first_name }}" required>
+                    <div class="invalid-feedback">{{ first_name_error }}</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="last_name" class="form-label">Last Name</label>
+                    <input type="text" class="form-control{% if last_name_error %} is-invalid{% endif %}" id="last_name" name="last_name" placeholder="Enter your last name..." maxlength=50 value="{{ last_name }}" required>
+                    <div class="invalid-feedback">{{ last_name_error }}</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="position" class="form-label">Position</label>
+                    <input type="text" class="form-control{% if position_error %} is-invalid{% endif %}" id="position" name="position"  placeholder="Enter your position..." maxlength=50 value="{{position}}" required>
+                    <div class="invalid-feedback">{{ position_error }}</div>
                   </div>
                   <div class="mb-3">
                     <label for="email" class="form-label">Email Address</label>
-                    <input type="text" class="form-control{% if email_error %} is-invalid{% endif %}" id="email" name="email" placeholder="Enter your email address..." maxlength=254 value="{{ email }}" required>
+                    <input type="email" class="form-control{% if email_error %} is-invalid{% endif %}" id="email" name="email" placeholder="Enter your email address..." maxlength=254 value="{{ email }}" required>
                     <div class="invalid-feedback">{{ email_error }}</div>
                   </div>
                   <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control{% if password_error %} is-invalid{% endif %}" id="password" name="password" placeholder="Choose a password..." aria-describedby="passwordHelp" required>
-                    <div id="passwordHelp" class="form-text">Your password must be at least 8 characters long.</div>
+                    <div id="passwordHelp" class="form-text">Use at least 8 characters, including at least an uppercase letter, a lowercase letter, a number, and a special character.</div>
                     <div class="invalid-feedback">{{ password_error }}</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Confirm your password</label>
+                    <input type="password" class="form-control{% if confirm_password_error %} is-invalid{% endif %}" id="confirm_password" name="confirm_password" placeholder="Confirm your password..." required>
+                    <div class="invalid-feedback">{{ confirm_password_error}}</div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profile_picture" class="form-label">Upload your profile picture</label>
+                    <input type="file" class="form-control{% if profile_picture_error %} is-invalid{% endif %}" id="profile_picture" name="profile_picture" accept="image/*">
+                    <div class="invalid-feedback">{{ profile_picture_error }}</div>
                   </div>
                   <div class="text-center">
                     <button type="submit" class="btn btn-primary">Sign Up</button>
