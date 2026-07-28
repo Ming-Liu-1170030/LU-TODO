@@ -1,8 +1,10 @@
 
 
+from xmlrpc.client import _Method
+
 from lutodo import app
 from lutodo import db
-from flask import redirect, render_template, request, session, url_for
+from flask import flash, redirect, render_template, request, session, url_for
 from flask_bcrypt import Bcrypt
 import re
 from pathlib import Path
@@ -340,24 +342,119 @@ def signup():
     # error messages.
     return render_template('signup.html')
 
-@app.route('/profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    """User Profile page endpoint.
 
-    Methods:
-    - get: Renders the user profile page for the current user.
-
-    If the user is not logged in, requests will redirect to the login page.
-    """
     if 'loggedin' not in session:
          return redirect(url_for('login'))
 
     # Retrieve user profile from the database.
     with db.get_cursor() as cursor:
-        cursor.execute('SELECT username, email, user_role FROM users WHERE user_id = %s;',
-                       (session['user_id'],))
+        cursor.execute('''
+                        SELECT email, 
+                        first_name, 
+                        last_name, 
+                        position, 
+                        profile_picture, 
+                        user_role, 
+                        status 
+                        FROM users WHERE user_id = %s;
+                        ''', 
+                        (session['user_id'],))
         profile = cursor.fetchone()
 
+    if request.method == 'POST':
+        first_name = request.form['first_name'].strip()
+        last_name = request.form['last_name'].strip()
+        position = request.form['position'].strip()
+        profile_picture = request.files.get('profile_picture')
+        remove_profile_picture = ('remove_profile_picture' in request.form)
+
+        # Assume no errors here.
+        first_name_error = None
+        last_name_error = None
+        position_error = None
+        profile_picture_error = None
+        new_profile_picture_filename = None
+
+        # Reuse the profile picture name validation and save.
+        if profile_picture and profile_picture.filename:
+            safe_filename = secure_filename(profile_picture.filename)
+            extension = Path(safe_filename).suffix.lower()
+
+            if extension not in ALLOWED_IMAGE_EXTENSIONS:
+                profile_picture_error = 'Please upload a PNG, JPG, JPEG, GIF, OR WEBP image.'
+            else:
+                new_profile_picture_filename = f'{uuid4().hex}{extension}'
+
+        # Stop users to remove and upload pictures in one time
+        if (remove_profile_picture and profile_picture and profile_picture.filename):
+            profile_picture_error = ('Please choose either to remove or upload pictures!')
+        # Reuse the validation code.
+        if not first_name.strip():
+            first_name_error = 'First name cannot be empty.'
+        elif len(first_name) > 50:
+            first_name_error = 'Your first name cannot exceed 50 characters.'
+        if not last_name.strip():
+            last_name_error = 'Last name cannot be empty.'
+        elif len(last_name) > 50:
+            last_name_error = 'Your last name cannot exceed 50 characters.'
+        if not position.strip():
+            position_error = 'Position cannot be empty.'
+        elif len(position) > 50:
+            position_error = 'Position cannot exceed 50 characters.'
+        # Reuse the code and temporary dictionary created.
+        if first_name_error or last_name_error or position_error or profile_picture_error:
+            profile = dict(profile)
+            profile['first_name'] = first_name
+            profile['last_name'] = last_name
+            profile['position'] = position
+            return render_template(
+                'profile.html',
+                profile=profile,
+                first_name_error=first_name_error,
+                last_name_error=last_name_error,
+                position_error=position_error,
+                profile_picture_error=profile_picture_error)
+        # Fetch old profile_picture 
+        old_profile_picture_filename = profile['profile_picture']
+        final_profile_picture_filename = old_profile_picture_filename
+        upload_folder = Path(app.static_folder) / 'profile_pictures'
+        upload_folder.mkdir(parents=True, exist_ok=True)
+
+        # Picture removal decision, or get new picture
+        if remove_profile_picture:
+            final_profile_picture_filename = None
+        elif new_profile_picture_filename:
+            profile_picture.save(
+                upload_folder / new_profile_picture_filename)
+            final_profile_picture_filename = new_profile_picture_filename
+
+        # Update correct information that validated
+        with db.get_cursor() as cursor:
+            cursor.execute('''
+                UPDATE users
+                SET first_name = %s,
+                    last_name = %s,
+                    position = %s,
+                    profile_picture = %s
+                WHERE user_id = %s;
+            ''', (
+                first_name,
+                last_name,
+                position,
+                final_profile_picture_filename,
+                session['user_id']
+            ))
+            # Delete the old_profile pictures applied
+            if (new_profile_picture_filename or remove_profile_picture) and old_profile_picture_filename:
+                old_picture_path = (upload_folder / old_profile_picture_filename)
+                if old_picture_path.is_file():
+                    old_picture_path.unlink()
+            flash('Profile updated successfully.', 'success')
+            # Return to the profile pages.
+            return redirect(url_for('profile'))
+        
     return render_template('profile.html', profile=profile)
 
 @app.route('/logout')

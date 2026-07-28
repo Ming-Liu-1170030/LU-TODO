@@ -6,6 +6,15 @@
 {% set active_page = 'profile' %}
 
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }} text-center" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endwith %}
+
 <section class="container py-5">
     <div class="row justify-content-center text-center">
         <div class="col-lg-7">
@@ -16,24 +25,86 @@
 </section>
     
 <section class="container">
-    <form>
+    <form action="{{ url_for('profile') }}" method="post" enctype="multipart/form-data">
+        <div class="text-center mb-4">
+            {% if profile.profile_picture %}
+            <img src="{{ url_for('static', filename='profile_pictures/' ~ profile.profile_picture)}}"
+                 alt="Profile picture"
+                 class="rounded-circle border object-fit-cover"
+                 width="170"
+                 height="170">
+            {% else %}
+            <p>No profile picture</p>
+            {% endif %}
+        </div>
+
+
         <div class="row justify-content-center">
-            <div class="col-lg-3 mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" value="{{ profile.username }}" disabled>
+            <div class="col-12 col-md-8 col-lg-6">
+            {% if profile.profile_picture %}
+            <div class="form-check mb-3">
+                <label class="form-check-label" for="remove_profile_picture">Remove current profile picture</label>
+                <input class="form-check-input" type="checkbox" id="remove_profile_picture" name="remove_profile_picture" disabled>
             </div>
-            <div class="col-lg-3 mb-3">
-                <label for="useremail" class="form-label">Email</label>
-                <input type="text" class="form-control" id="useremail" name="useremail" value="{{ profile.email }}" disabled>
+            {% endif %}
+            <div class="mb-3">
+                <label for="profile_picture" class="form-label">Add or replace profile picture</label>
+                <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept=".png, .jpg, .jpeg, .gif, .webp" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="first_name" class="form-label">First name</label>
+                <input type="text" class="form-control{% if first_name_error %} is-invalid{% endif %}" id="first_name" name="first_name" value="{{ profile.first_name }}" disabled>
+                <div class="invalid-feedback">{{ first_name_error }}</div>
+            </div>
+            <div class="mb-3">
+                <label for="last_name" class="form-label">Last name</label>
+                <input type="text" class="form-control{% if last_name_error %} is-invalid{% endif %}" id="last_name" name="last_name" value="{{ profile.last_name }}" disabled>
+                <div class="invalid-feedback">{{ last_name_error }}</div>
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">Position</label>
+                <input type="text" class="form-control{% if position_error %} is-invalid{% endif %}" id="position" name="position" value="{{ profile.position }}" disabled>
+                <div class="invalid-feedback">{{ position_error }}</div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ profile.email }}" disabled>
+            </div>
+            <div class="mb-3">
+                <label for="user_role" class="form-label">Role</label>
+                <input type="text" class="form-control" id="user_role" name="user_role" value="{{ profile.user_role }}" disabled>
             </div>
         </div>
-        <div class="my-3 row justify-content-center">
-            <div class="col-lg-6">
-                <p>You could make the fields on this form editable, and add buttons to let users save or cancel any changes they make.</p>
-                <hr />
-                <p><small><em>Hint: Remember to think about validation and error handling: for example, what happens if users enter an invalid email address or a username that's already taken?</em></small></p>
-            </div>
+        
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-primary" id="editButton">Edit</button>
+            <button type="submit" class="btn btn-success d-none" id="saveButton">Save</button>
+            <button type="button" class="btn btn-secondary d-none" id="cancelButton">Cancel</button>
         </div>
+
     </form>
 </section>
+<script>
+    const editButton = document.getElementById('editButton')
+    const saveButton = document.getElementById('saveButton')
+    const cancelButton = document.getElementById('cancelButton')
+    const firstNameInput = document.getElementById('first_name')
+    const lastNameInput = document.getElementById('last_name')
+    const positionInput = document.getElementById('position')
+    const profilePictureInput = document.getElementById('profile_picture')
+    const removeProfilePicture = document.getElementById('remove_profile_picture')
+    editButton.addEventListener('click', function() {
+        firstNameInput.disabled = false; 
+        lastNameInput.disabled = false; 
+        positionInput.disabled = false;
+        profilePictureInput.disabled = false;
+        if (removeProfilePicture) {removeProfilePicture.disabled = false;} 
+        editButton.classList.add('d-none');
+        saveButton.classList.remove('d-none');
+        cancelButton.classList.remove('d-none');
+        })
+    cancelButton.addEventListener('click', function () {
+        window.location.reload();
+        });
+</script>
 {% endblock %}

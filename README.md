@@ -10,6 +10,20 @@ Instructions will be added during development.
 
 Instructions will be added during development.
 
+### Development progress
+
+* Login done
+* Sign-up done
+
+* Profile page and management (current)
+1. Edit and update name, position done;
+
+
+* Project management
+* Task function
+* Project share
+* Admin
+
 ## GenAI Acknowledgement
 
 I have used OpenAI Codex during the development and the details are documented as follows:
@@ -45,6 +59,23 @@ How can I save the validated pictures into my static folder?
 * How it is used?
 
 I was suggested to import pathlib, uuid and werkzug.utils first, and allow the extensions of types of pictures. And I was suggested to build a static file for the future profile pictures. After that, I was suggested to check the index to see if is accepted and if so, a random number index should be generated for the following use.
+
+
+### Date used: 27 July 2026
+
+* 1. Prompts:
+
+- How can I write responsive 'edit' function?
+
+
+* Other input provided: 
+
+- How can I set alert when edit successfully?
+
+* How it is used?
+
+I was suggested to use JavaScript. At first, id should be added into the html button so that JavaScript can find it. Then using id to help JavaScript find all the buttons and save into variables. And when JavaScript identifies the click, responsive editing function will be open and available, save and cancel will pop up.
+I was suggested to import flash and use Jinja and HTML language in the profile.html page to let the message pop up.
 
 ## Passwords
 
