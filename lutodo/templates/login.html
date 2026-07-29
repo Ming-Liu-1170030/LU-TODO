@@ -17,6 +17,14 @@
             </div>
             <div class="bg-white border container">
                 <form class="p-3" action="{{ url_for('login') }}" method="post">
+                  <form class="p-3" action="{{ url_for('login') }}" method="post">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} text-center" role="alert">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endwith %}
                   {% if account_inactive %}
                   <div class="alert alert-danger">
                     Your account is inactive and cannot log in.

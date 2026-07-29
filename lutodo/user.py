@@ -2,6 +2,8 @@
 
 from xmlrpc.client import _Method
 
+from click import confirm
+
 from lutodo import app
 from lutodo import db
 from flask import flash, redirect, render_template, request, session, url_for
@@ -10,6 +12,8 @@ import re
 from pathlib import Path
 from uuid import uuid4
 from werkzeug.utils import secure_filename
+
+import password_hash_generator
 
 # Create an instance of the Bcrypt class, which we'll be using to hash user
 # passwords during login and registration.
@@ -456,6 +460,84 @@ def profile():
             return redirect(url_for('profile'))
         
     return render_template('profile.html', profile=profile)
+
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    if 'loggedin' not in session:
+        return redirect(url_for('login'))
+
+    current_password = request.form['current_password']
+    new_password = request.form['new_password']
+    confirm_password = request.form['confirm_password']
+    # Assume no errors
+    current_password_error = None
+    new_password_error = None
+    confirm_password_error = None
+
+    # Fetch password hash for validation
+    with db.get_cursor() as cursor:
+        cursor.execute(
+            '''
+            SELECT password_hash
+            FROM users
+            WHERE user_id = %s;
+            ''',
+            (session['user_id'],)
+        )
+        account = cursor.fetchone()
+
+        # Check the password hash 
+        if not flask_bcrypt.check_password_hash(
+            account['password_hash'],
+            current_password):
+            current_password_error = 'Current password is incorrect.'
+
+    # Validate the new password resuing the signup code
+    if len(new_password) < 8:
+        new_password_error = 'Password must be at least 8 characters long!'
+    elif not re.search(r'[A-Z]', new_password):
+        new_password_error = 'Password must contain at least one uppercase letter.'
+    elif not re.search(r'[a-z]', new_password):
+        new_password_error = 'Password must contain at least one lowercase letter.'
+    elif not re.search(r'[0-9]', new_password):
+        new_password_error = 'Password must contain at least one number (0-9).'
+    elif not re.search(r'[!@#$%^&*]', new_password):
+        new_password_error = 'Password must contain at least one special character (!@#$%^&*).'
+
+    # Password consistency validation.
+    if confirm_password != new_password:
+        confirm_password_error = 'The passwords do not match.'  
+
+    if (current_password_error 
+            or new_password_error
+            or confirm_password_error):
+        error_message = (
+            current_password_error
+            or new_password_error
+            or confirm_password_error
+        )
+        flash(error_message, 'danger')
+        return redirect(url_for('profile'))  
+
+    # Generate new hash for new_password and save it
+    new_password_hash = (flask_bcrypt.generate_password_hash(new_password).decode())
+
+    # Update it into users.password_hash
+    with db.get_cursor() as cursor:
+        cursor.execute(
+            '''
+            UPDATE users
+            SET password_hash = %s 
+            WHERE user_id = %s;
+            ''',
+            (
+            new_password_hash,
+            session['user_id']
+            )
+        )
+    flash('Password changed successfully. Please log in again.',
+          'success')
+    return redirect(url_for('logout'))
 
 @app.route('/logout')
 def logout():
