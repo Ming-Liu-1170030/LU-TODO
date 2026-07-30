@@ -15,18 +15,9 @@ Instructions will be added during development.
 * Login done
 * Sign-up done
 * Profile page and management done
+* Project management done
+* Task function done
 
-* Project management
-
-- create project
-- show project list
-
-- check project
-- edit project
-- delete project
-- owner
-
-* Task function
 * Project share
 * Admin
 
@@ -37,186 +28,55 @@ I have used OpenAI Codex during the development and the details are documented a
 ### Date used: 26 July 2026
 
 * 1. Prompts:
-
 - Help me check my 'signup' html page and show me the errors.
 - What does multipart/form-data mean?
 
 
 * Other input provided: 
-
 And I upload my written signup.html to Codex.
 
 * How it is used?
-
 A suggestion of missing 'multipart/form-data' is provided by Codex, and I ask what that means and hear back and know that helps to submit image profile picture then I 
 add it to my signup.html page.
 
 
 * 2. Prompts:
-
 - How can I deal with the profile_picture users uploaded?
 
 
 * Other input provided: 
-
 How can I save the validated pictures into my static folder?
 
 
 * How it is used?
-
 I was suggested to import pathlib, uuid and werkzug.utils first, and allow the extensions of types of pictures. And I was suggested to build a static file for the future profile pictures. After that, I was suggested to check the index to see if is accepted and if so, a random number index should be generated for the following use.
 
 
 ### Date used: 27 July 2026
 
 * 1. Prompts:
-
 - How can I write responsive 'edit' function?
 
-
 * Other input provided: 
-
 - How can I set alert when edit successfully?
 
 * How it is used?
-
 I was suggested to use JavaScript. At first, id should be added into the html button so that JavaScript can find it. Then using id to help JavaScript find all the buttons and save into variables. And when JavaScript identifies the click, responsive editing function will be open and available, save and cancel will pop up.
 I was suggested to import flash and use Jinja and HTML language in the profile.html page to let the message pop up.
 
-## Passwords
+### Date used: 31 July 2026
 
-One of the key things about this login system is that it doesn't actually store
-users' passwords in the database. That may lead you to ask...
+* 1. Prompts:
+- How can I delete projects and tasks?
+- Why do I need to authorize if the project or task belonging to someone?
 
-### Why not store passwords?
-People tend to re-use passwords across multiple websites, no matter how much
-security experts might tell them not to. That means if someone gets access to
-your database, containing a whole lot of users' passwords and other details
-like names or email addresses, they can use those passwords to compromise
-your users' accounts with other services (like their email, or bank account).
 
-### How do you handle registration and login without storing passwords?
+* How it is used?
+I was suggested to add authorization checks before deleting a task. First, Flask checks whether the user is logged in. Then, it uses the project_id and the current user’s user_id from the session to confirm that the user owns the project. After authorization passes, Flask uses both the task_id and project_id to delete the correct task. This prevents users from changing IDs in the URL and deleting tasks that they do not own.
 
-Easy! Well, sort of. It goes like this:
+* 2. Prompts:
+- How can I set overdue for tasks?
 
-1. When the user first gives us a password during registration, we pass it
-   through a cryptographic "hash" function: a one-way mathematical operation
-   that transforms the original password into its corresponding "hash value"
-   or "hash". The same password always results in the same hash.
-   
-2. We throw away the original password, and just keep the hash.
-   
-3. The hash value is useless to an attacker: because the hash-function is
-   one-way, anyone who steals our database of user accounts can't work out
-   what the users' passwords are. Well, okay, there are clever ways around
-   that. Look up "rainbow tables" if you're interested. Read Cory Doctorow's
-   "Knights of the Rainbow Table" if you're *really* interested. But it takes
-   a whole lot more time and computing power for an attacker to get a user's
-   password back from its hash than it does to just read the plain password
-   straight out of your database.
+* How it is used?
+I was suggested to use CASE in the SQL query when Flask gets the task information. If the due date is not empty, the date is earlier than the current date, and the task is not complete, a temporary is_overdue value will be set to true. Then I use Jinja in the project.html page to check task.is_overdue and display the overdue status.
 
-4. When a user tries to log in, we take the password they supplied us, run it
-   through the exact same hash function, and then compare the hash to the one
-   we have on file. Because the same password will always produce the same
-   hash, if the two hashes match then the passwords must match! Again, kinda.
-   It's possible, though very unlikely, that two passwords may produce the
-   same hash value. In that case, you'd be able to log in using either
-   password. These kinds of "hash collisions" are extremely rare, though. Rare
-   enough that we won't worry about that here.
-
-So, in short:
-1. The user gives us a password.
-2. We put that password though a one-way hashing algorithm to get its "hash".
-3. We store the hash, **not** the password.
-4. During login, we put the supplied password through the same algorithm.
-5. If the hash of the supplied password matches the hash of the user's original
-   password that we stored in step 3, then we know the user has supplied the
-   correct password... without having to know their password at all.
-
-Cool, huh?
-
-### Salting Passwords
-
-Remember how we mentioned that it's technically possible for an attacker to
-work out a user's original password from its hash, just expensive? Well, it's
-actually not expensive at all if you just pre-calculate one of those "rainbow
-tables": essentially a giant table mapping hash values back to passwords. It
-takes time to generate something like that, and the tables are absolutely huge,
-but storage is pretty cheap these days and you only have to generate the table
-once per hash algorithm. Once someone has a rainbow table for a particular
-algorithm, translating hashes back to passwords is just a simple lookup.
-
-The contemporary solution to this is to add a "salt" to each password before
-you hash it. The salt is just some random string. It doesn't have to be secret,
-necessarily, just specific to your app (which we used to do in older versions
-of this example project) or, ideally, specific to each password (which we do in
-this current version). Adding a salt to your passwords totally breaks the whole
-"rainbow table" approach: an attacker can't just use an off-the-shelf table
-any more. With our old approach, one salt for the whole app, an attacker needs
-to generate a rainbow table specific to *our application's salt*. When you're
-using per-password salts, like we are here, an attacker would have to generate
-one of those giant tables to break *each individual password* in our database.
-
-Quantum computing will probably break all this, in the not-too-distant future,
-but for now this approach provides a reasonable means of protecting users'
-passwords from disclosure if an attacker gains access to our database.
-
-### How exactly do we do all this?
-
-With the [Flask-Bcrypt library](https://flask-bcrypt.readthedocs.io/en/1.0.1/)
-(which is really just a Flask-specific wrapper for the bcrypt library) and a
-couple lines of code.
-
-If you take a look at the [database creation script](create_database.sql),
-you'll see that instead of a "password" field to store the password, we have a
-"password_hash" field that stores a string of text. Check out the
-[populate database script](populate_database.sql), and you'll see these aren't
-human-readable passwords.
-
-Flask-Bcrypt uses the [bcrypt algorithm](https://en.wikipedia.org/wiki/Bcrypt)
-(as you may have guessed from the name). Bcrypt password hashes bundle together
-a bcrypt version number, the password hash itself, and the salt value used to
-generate it. Together, depending on which version of the algorithm you're
-using, this is a string of either 59 or 60 bytes (always 60 bytes in the
-current version).
-
-If this sounds terrifyingly complicated, don't worry. Take a look at the
-[Hash generator Python script](password_hash_generator.py) for an example of
-how to create the hashes (literally one line of code) and check a password
-against a hash (again, one line of code).
-
-If we were using the bcrypt library directly, or another option such as
-[Flask-Hashing](https://flask-hashing.readthedocs.io/en/latest/) (used in older
-versions of this example) then we'd need to handle the "salting" process
-ourselves. However, the Flask-Bcrypt library does this for us. We only have to
-call the `generate_password_hash(password)` function to generate a hash for a
-new `password` (e.g. when a user signs up or changes their password). That
-function generates a new salt value then uses it to hash the password in a
-single step.
-
-Once we've generated a password hash and stored it in our database, we can then
-call the `check_password_hash(pw_hash, password)` function to check a whether a
-`password` supplied during login matches the `pw_hash` stored in our database
-for that particular user account.
-
-### Storing password hashes in PostgreSQL
-
-The string of bytes making up a bcrypt hash are all in the "printable
-character" range, so can be displayed a text string. In a PostgreSQL database
-you could store these as:
-- `CHAR(60)` - Exactly 60 characters
-- `VARCHAR(60)` - Up to 60 characters
-- `TEXT` - Any number of characters
-
-We use latter format (`TEXT`) in this example because there's no performance
-advantage to using `CHAR` or `VARCHAR` in PostgreSQL. These are stored the same
-as `TEXT` "under the hood"; the only difference is that they're limited to a
-set or maximum length.
-
-We've chosen to use `VARCHAR` columns for our username and email address fields
-to enforce "business rules" around their lengths: we want to ensure the system
-cannot accept user names beyond our chosen maximum of 20 characters, or email
-addresses that are unrealistically long. However, we don't have any business
-rules around the length of a hash: using `TEXT` allows us to adapt to future
-changes in bcrypt, or a new hashing algorithm altogether, without modifying the
-database.

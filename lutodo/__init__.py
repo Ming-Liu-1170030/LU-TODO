@@ -29,3 +29,4 @@ from lutodo import student
 from lutodo import staff
 from lutodo import admin
 from lutodo import project
+from lutodo import task

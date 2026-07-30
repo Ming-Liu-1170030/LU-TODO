@@ -1,5 +1,6 @@
 
 
+from asyncio import tasks
 import re
 from winreg import REG_DWORD_BIG_ENDIAN
 
@@ -187,7 +188,27 @@ def view_project(project_id):
     if project is None:
         flash('Project not found or you do not have permission.', 'danger')
         return redirect(url_for('projects'))
-    return render_template('project.html', project=project)
+
+    # View the tasks
+    with db.get_cursor() as cursor:
+        cursor.execute(
+            '''
+            SELECT task_id, task_name, description, priority, due_date, is_complete,
+                CASE
+                    WHEN due_date IS NOT NULL
+                        AND due_date < CURRENT_DATE
+                        AND is_complete = FALSE
+                    THEN TRUE
+                    ELSE FALSE
+                END AS is_overdue 
+            FROM tasks
+            WHERE project_id = %s
+            ORDER BY task_id;
+            ''',
+            (project_id,)
+        )
+        tasks = cursor.fetchall()
+    return render_template('project.html', project=project, tasks=tasks)
 
         
                             
