@@ -2,7 +2,7 @@
 
 from asyncio import tasks
 import re
-from winreg import REG_DWORD_BIG_ENDIAN
+
 
 from lutodo import app
 from lutodo import db
