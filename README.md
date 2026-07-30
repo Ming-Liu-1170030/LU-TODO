@@ -14,12 +14,18 @@ Instructions will be added during development.
 
 * Login done
 * Sign-up done
-
-* Profile page and management (current)
-1. Edit and update name, position done;
-
+* Profile page and management done
 
 * Project management
+
+- create project
+- show project list
+
+- check project
+- edit project
+- delete project
+- owner
+
 * Task function
 * Project share
 * Admin

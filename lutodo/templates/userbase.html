@@ -36,13 +36,16 @@
 				<div class="collapse navbar-collapse" id="navbarSupportedContent">
 					<ul class="navbar-nav me-auto">
 						<li class="nav-item">
-							<a class="nav-link{{' active' if active_page=='home' else ''}}" href="{% if session['user_role'] == 'customer' %}{{ url_for('customer_home') }}{% elif session['user_role'] == 'staff' %}{{ url_for('staff_home') }}{% elif session['user_role'] == 'admin' %}{{ url_for('admin_home') }}{% endif %}">Home</a>
+							<a class="nav-link{{' active' if active_page=='home' else ''}}" href="{% if session['user_role'] == 'student' %}{{ url_for('student_home') }}{% elif session['user_role'] == 'staff' %}{{ url_for('staff_home') }}{% elif session['user_role'] == 'admin' %}{{ url_for('admin_home') }}{% endif %}">Home</a>
 						</li>
 						{# Add any new top-level menu items here. #}
 					</ul>
 					<ul class="navbar-nav">
 						<li class="nav-item">
 							<a class="nav-link{{' active' if active_page=='profile' else ''}}" href="{{ url_for('profile') }}">User Profile</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link{{' active' if active_page=='projects' else ''}}" href="{{ url_for('projects') }}">Projects</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
