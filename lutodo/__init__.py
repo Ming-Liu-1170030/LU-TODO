@@ -30,3 +30,4 @@ from lutodo import staff
 from lutodo import admin
 from lutodo import project
 from lutodo import task
+from lutodo import sharing

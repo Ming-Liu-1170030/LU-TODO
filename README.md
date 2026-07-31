@@ -17,9 +17,17 @@ Instructions will be added during development.
 * Profile page and management done
 * Project management done
 * Task function done
+* Project share Done
 
-* Project share
 * Admin
+- View all users
+- search users
+- view user profile
+- change user role
+- change user status
+- delete user
+- view all shared project and change owner
+- delete shared project
 
 ## GenAI Acknowledgement
 
@@ -79,4 +87,14 @@ I was suggested to add authorization checks before deleting a task. First, Flask
 
 * How it is used?
 I was suggested to use CASE in the SQL query when Flask gets the task information. If the due date is not empty, the date is earlier than the current date, and the task is not complete, a temporary is_overdue value will be set to true. Then I use Jinja in the project.html page to check task.is_overdue and display the overdue status.
+
+### Date used: 1 August 2026
+
+* 1. Prompts:
+- How can list all the projects?
+- Can you teach me the sql language here for listing all the projects?
+
+
+* How it is used?
+I was suggested to list all projects by checking two situations: projects that I own and projects that other users have shared with me. I use JOIN users to get the project owner’s name, and LEFT JOIN project_members to connect projects with their members. Then I use WHERE with OR to keep a project when I am either its owner or one of its members. Since one project may have multiple members and appear more than once after joining the tables, I use DISTINCT to display each project only once.
 

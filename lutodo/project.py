@@ -18,16 +18,25 @@ def projects():
 # Fetch all and list the projects
     with db.get_cursor() as cursor:
         cursor.execute(
-            '''
-            SELECT project_id, project_name, description
-            FROM projects
-            WHERE owner_id = %s
-            ORDER BY project_name
-            ''',
-            (
-                session['user_id'],
-            )
-        )
+        '''
+        SELECT DISTINCT                                                         
+            projects.project_id,
+            projects.project_name,
+            projects.description,
+            projects.owner_id,
+            users.first_name AS owner_first_name,
+            users.last_name AS owner_last_name
+        FROM projects
+        JOIN users
+            ON projects.owner_id = users.user_id
+        LEFT JOIN project_members
+            ON projects.project_id = project_members.project_id
+        WHERE projects.owner_id = %s
+           OR project_members.user_id = %s
+        ORDER BY projects.project_name;
+        ''',
+        (session['user_id'], session['user_id'])
+    )
         project_list = cursor.fetchall()
 
     return render_template('projects.html', projects=project_list)
@@ -177,13 +186,27 @@ def view_project(project_id):
         return redirect(url_for('login'))
     with db.get_cursor() as cursor:
         cursor.execute(
-            '''
-            SELECT project_id, project_name, description, owner_id
-            FROM projects
-            WHERE owner_id = %s AND project_id = %s;
-            ''',
-            (session['user_id'], project_id)
-        )
+    '''
+    SELECT DISTINCT
+        projects.project_id,
+        projects.project_name,
+        projects.description,
+        projects.owner_id
+    FROM projects
+    LEFT JOIN project_members
+        ON projects.project_id = project_members.project_id
+    WHERE projects.project_id = %s
+      AND (
+          projects.owner_id = %s
+          OR project_members.user_id = %s
+      );
+    ''',
+    (
+        project_id,
+        session['user_id'],
+        session['user_id']
+    )
+)
         project = cursor.fetchone()
     if project is None:
         flash('Project not found or you do not have permission.', 'danger')
@@ -208,7 +231,29 @@ def view_project(project_id):
             (project_id,)
         )
         tasks = cursor.fetchall()
-    return render_template('project.html', project=project, tasks=tasks)
+
+    # Get all members of this project for showing.
+    with db.get_cursor() as cursor:
+        cursor.execute(
+            '''
+            SELECT
+                users.user_id,
+                users.first_name,
+                users.last_name,
+                users.position,
+                users.email,
+                users.profile_picture
+            FROM project_members
+            JOIN users
+                ON project_members.user_id = users.user_id
+            WHERE project_members.project_id = %s
+            ORDER BY users.first_name, users.last_name;
+            ''',
+            (project_id,)
+        )
+        members = cursor.fetchall()
+
+    return render_template('project.html', project=project, tasks=tasks, members=members)
 
         
                             
