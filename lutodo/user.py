@@ -48,13 +48,9 @@ def user_home_url():
 
 @app.route('/')
 def root():
-    """Root endpoint (/)
-    
-    Methods:
-    - get: Redirects guests to the login page, and redirects logged-in users to
-        their own role-specific homepage.
-    """
-    return redirect(user_home_url())
+    if 'loggedin' in session:
+        return redirect(user_home_url())
+    return render_template('home.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -491,6 +487,8 @@ def change_password():
             account['password_hash'],
             current_password):
             current_password_error = 'Current password is incorrect.'
+        elif flask_bcrypt.check_password_hash(account['password_hash'], new_password):
+            new_password_error = ('New password must be different from your current password.')
 
     # Validate the new password resuing the signup code
     if len(new_password) < 8:

@@ -1,0 +1,49 @@
+{% extends 'userbase.html' %}
+{% block title %}User Administration{% endblock %}
+{% set active_page = 'admin_users' %}
+{% block content %}
+
+<section class="container py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message}}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <h1 class="mb-4">Shared Projects</h1>
+    {% if shared_projects %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Description</th>
+                        <th>Owner</th>
+                        <th>Members</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for project in shared_projects %}
+                        <tr>
+                            <td>{{ project.project_name }}</td>
+                            <td>{{ project.description or 'No description' }}</td>
+                            <td>
+                                {{ project.owner_first_name }}
+                                {{ project.owner_last_name }}
+                            </td>
+                            <td>{{ project.member_count }}</td>
+                            <td><a href="{{ url_for('admin_project', project_id=project.project_id) }}" class="btn btn-primary btn-sm">Manage</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No shared projects found.</p>
+    {% endif %}
+</section>
+{% endblock %}

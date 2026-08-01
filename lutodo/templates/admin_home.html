@@ -11,6 +11,10 @@
         <div class="col-lg-7">
             <h1>Admin Home Page</h1>
             <p class="lead text-muted">This is the page an admin user sees when they first sign in. It should provide quick access to the information and features they're most likely to need when using the app.</p>
+            <div class="mt-4"><a href="{{ url_for('admin_users') }}" class="btn btn-primary">User Administration</a>
+                <a href="{{ url_for('admin_projects') }}" class="btn btn-primary">Manage Shared Projects</a>
+            </div>
+            
         </div>
     </div>
 </section>

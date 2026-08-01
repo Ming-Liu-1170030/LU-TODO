@@ -41,7 +41,7 @@
                         {% endif %}
 
                         <p><strong>Name: </strong>{{ member.first_name }} {{ member.last_name }}</p>
-                        <p><strong>Position: </strong> {{ member.position }}</p>
+                        <p><strong>Position: </strong> {{ member.position or 'Not provided'}}</p>
                         <p><strong>Email: </strong> {{ member.email }}</p>
                         <button type="submit" class="btn btn-danger">Remove Member</button></form>
                     </div>

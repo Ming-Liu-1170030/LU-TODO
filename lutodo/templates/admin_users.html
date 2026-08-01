@@ -1,0 +1,57 @@
+{% extends 'userbase.html' %}
+{% block title %}User Administration{% endblock %}
+{% set active_page = 'admin_users' %}
+{% block content %}
+
+<section class="container py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message}}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <h1>User Administration</h1>
+
+    <form action="{{ url_for('admin_users') }}" method="get" class="mt-4 mb-4">
+    <div class="input-group">
+        <input type="search" class="form-control" id="search" name="search" placeholder="Search users by email, name or position..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary">Search</button>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">Clear</a>
+    </div>
+    </form>
+        {% if users %}
+        <div class="table-responsive mt-4">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Position</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.first_name }} {{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.position or 'Not provided' }}</td>
+                            <td>{{ user.user_role }}</td>
+                            <td>{{ user.status }}</td>
+                            <td><a href="{{ url_for('admin_user', user_id=user.user_id) }}" class="btn btn-sm btn-primary">View</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted mt-4">No users found.</p>
+        {% endif %}
+</section>
+
+    {% endblock %}
