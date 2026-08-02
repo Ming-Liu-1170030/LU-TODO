@@ -14,16 +14,16 @@
 
     <h1 class="mb-3">{{ project.project_name }}</h1>
     <p class="text-muted">{{ project.description or 'No description' }}</p>
-    <a href="{{ url_for('projects')}}" class="btn btn-secondary">Go back</a>
     {% if session['user_role'] in ['staff', 'admin'] and project.owner_id == session['user_id'] %}
 
             <h2 class="h4">Share Project</h2>
             <form action="{{ url_for('add_project_member', project_id=project.project_id) }}" method="post">
                 <div class="mb-3">
                     <label for="member_email" class="form-label">Member Email</label>
-                    <input type="email" class="form-control" id="member_email" name="member_email" required>
+                    <input type="email" class="form-control" id="member_email" name="member_email" required placeholder="Enter the email of the member you want to share this project with...">
                 </div>
                 <button type="submit" class="btn btn-primary">Add Member</button>
+                <a href="{{ url_for('projects')}}" class="btn btn-outline-secondary">Go back to Projects</a>
             </form>
 
             <h2 class="h4 mt-4">Project Members</h2>
@@ -79,22 +79,27 @@
     <h2 class="h4">Tasks</h2>
     {% if tasks %}
         {% for task in tasks %}
-                <div class="border rounded p-3 mb-3">
-                    <h3 class="h5">{{ task.task_name }}</h3>
-                    <p class="text-muted">{{ task.description or 'No description' }}</p>
-                    <p><strong>Priority: </strong>{{ task.priority }}</p>
-                    <p><strong>Due date: </strong>{{ task.due_date or 'No due date' }}</p>
-                    <p class="mb-0"><strong>Status: </strong>
-                        {% if task.is_complete %}
-                            Complete
-                        {% elif task.is_overdue %}
-                            Overdue
-                        {% else %}
-                            Incomplete
-                        {% endif %}
-                    </p>
+            <div class="border rounded bg-white p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                    <h3 class="h5 mb-0">{{ task.task_name }}</h3>
+                    <a href="{{ url_for('edit_task', project_id=project.project_id, task_id=task.task_id) }}"
+                    class="btn btn-sm btn-outline-primary">Edit</a>
                 </div>
-            <a href="{{ url_for('edit_task', project_id=project.project_id, task_id=task.task_id )}}" class="btn btn-primary mt-2">Edit Task</a>
+
+                <p class="text-muted mt-3">{{ task.description or 'No description' }}</p>
+                <p><strong>Priority:</strong> {{ task.priority }}</p>
+                <p><strong>Due date:</strong>{{ task.due_date or 'No due date' }}</p>
+                <p class="mb-0">
+                    <strong>Status:</strong>
+                    {% if task.is_complete %}
+                        Complete
+                    {% elif task.is_overdue %}
+                        Overdue
+                    {% else %}
+                        Incomplete
+                    {% endif %}
+                </p>
+            </div>
         {% endfor %}
     {% else %}
     <p class="text-muted">No tasks have been created yet.</p>

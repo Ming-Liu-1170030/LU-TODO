@@ -1,0 +1,184 @@
+/* Set the background, text colour and font for all pages. */
+body {
+    min-height: 100vh;
+    background-color:#dfe9f3;
+    color: #1f2937;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Use dark blue for Bootstrap primary backgrounds. */
+.bg-primary {
+    background-color: #0a3f70 !important;
+}
+
+/* Change the navigation bar from Bootstrap blue to dark grey. */
+.navbar {
+    background-color: #0a3f70 !important;
+    border-bottom: 3px solid #0a3f70;
+}
+
+/* Make the LU-TODO name stronger. */
+.navbar-brand {
+    font-weight: bold;
+}
+
+/* Make active and hovered navigation links white. */
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: white;
+}
+
+/* Use green for the main buttons. */
+.btn-primary {
+    background-color: #1f5d8f;
+    border-color: #1f5d8f;
+    border-radius: 6px;
+}
+
+/* Use darker green when the user hovers over a button. */
+.btn-primary:hover {
+    background-color: #16466d;
+    border-color: #16466d;
+}
+/* Give input fields consistent borders and corners. */
+.form-control,
+.form-select {
+    border-color: #d8dee7;
+    border-radius: 6px;
+}
+
+/* Highlight an input when the user selects it. */
+.form-control:focus,
+.form-select:focus {
+    border-color: #1f5d8f;
+    box-shadow: 0 0 0 3px rgba(31, 93, 143, 0.15);
+}
+
+/* Give project list items a clean white background. */
+.list-group-item {
+    background-color: white;
+    border-color: #d8dee7;
+    border-radius: 6px !important;
+}
+
+/* Open navigation dropdown menus when hovering on larger screens. */
+@media (min-width: 576px) {
+    .navbar .dropdown:hover .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+}
+
+/* Full-screen login layout. */
+.login-page {
+    margin: 0;
+    background-color: white;
+}
+
+.login-layout {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+/* Left login area. */
+.login-form-side {
+    display: grid;
+    place-items: center;
+    padding: 48px;
+    background-color: white;
+}
+
+.login-form-wrap {
+    width: 100%;
+    max-width: 420px;
+}
+
+.login-brand {
+    display: inline-block;
+    margin-bottom: 48px;
+    color: #102a43;
+    font-size: 45px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-eyebrow {
+    margin-bottom: 8px;
+    color: #1f5d8f;
+    font-weight: bold;
+}
+
+.login-title {
+    margin-bottom: 12px;
+    color: #102a43;
+    font-size: 40px;
+}
+
+.login-intro {
+    margin-bottom: 32px;
+    color: #64748b;
+}
+
+.login-signup {
+    margin-top: 24px;
+    margin-bottom: 0;
+    text-align: center;
+}
+
+/* Right animated area. */
+.login-visual-side {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 64px;
+    background-color: #102a43;
+    color: white;
+}
+
+.login-visual-copy {
+    max-width: 520px;
+}
+
+.login-visual-brand {
+    margin-bottom: 24px;
+    font-weight: bold;
+}
+
+
+
+/* Simple public home page. */
+.home-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #102a43;
+    color: white;
+}
+
+.home-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 48px 24px;
+}
+
+.home-content .container {
+    max-width: 720px;
+}
+
+.home-divider {
+    border-color: #93c5fd;
+}
+
+.home-disclaimer {
+    color: #dbeafe;
+}
+
+.home-footer {
+    padding: 16px;
+    border-top: 1px solid #d8dee7;
+    background-color: white;
+    color: #64748b;
+    text-align: center;
+}

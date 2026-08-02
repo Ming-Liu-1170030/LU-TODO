@@ -15,7 +15,7 @@ It is a Flask and PostgreSQL web application for managing projects and tasks. Us
 
 2. Create a Python virtual environment:
 
-3. Install dependencies: ```powershell pip install -r requirements.txt
+3. Install dependencies: ```powershell pip install... -r requirements.txt
 
 ## Database Setup
 
@@ -27,15 +27,21 @@ It is a Flask and PostgreSQL web application for managing projects and tasks. Us
 
 4. Run populate_database.sql against the same database. This clears existing table data and inserts the required test data:
 
-### Development progress
+### Features
 
-* Login done
-* Sign-up done
-* Profile page and management done
-* Project management done
-* Task function done
-* Project share Done
-* Admin management done
+* Login 
+* Sign-up 
+* Profile page and management 
+* Project management 
+* Task function 
+* Project share 
+* Admin management
+
+## Navigation Note
+
+## Navigation Note
+
+When I polish my nav-bar UI, I realized that I placed the project list and project creation form together on the same Projects page. Therefore, the "View Projects" and "Create Project" options in the navigation menu lead to the same page, where users can view existing projects and create a new one. This design does not affect any project functionality.
 
 ## GenAI Acknowledgement
 
@@ -116,6 +122,7 @@ I was suggested to list all projects by checking two situations: projects that I
 
 * How it is used?
 I first create a new route with project ID to identify which shared project the admin selects. The backend checks login, admin role, and whether the project is really shared. Then all staff and admin users are retrieved from the database and sent to HTML as a dropdown list. When admin selects a new owner and submits, Flask receives the new owner ID, checks it is valid and not a student, and makes sure this user does not already own a project with the same name. After all checks pass, the project owner_id is updated in the database. The new owner is also removed from the member table because an owner should not also be a member.
+
 And I was suggested to start from the projects table and give it a short name p. Then I connect projects.owner_id with users.user_id, because I need to find the first name and last name of the project owner. After that, I connect projects.project_id with project_members.project_id, because I need to find which member records belong to each project. Each member creates one matching row, so I use COUNT(pm.user_id) to calculate how many members each project has. I use GROUP BY to put the rows belonging to the same project back together, then use ORDER BY to display the projects in project-name order. Because this uses a normal JOIN with project_members, projects without members are not included.
 
 * 1. Prompts:
@@ -131,3 +138,21 @@ Codex suggested and generated the initial structure of 'generate_test_data.py'. 
 
 I asked Codex to explain the code and simplify some parts that I found difficult, including priority, due-date, completion-status and membership generation. I reviewed and modified the code, ran the script, checked the generated record counts in PostgreSQL, and tested the generated student, staff and admin accounts in the application.
 
+
+### Date used: 2 August 2026
+
+* 1. Prompts:
+- How can I change all the app colour, and apply hover display to all the pages?
+- How can I put admin and project function respectively in the nav bar and display them in a drop-down way?
+
+
+* How it is used?
+I was suggested by Codex to create a shared app.css file and was given a basic CSS frame so that I could choose the colours myself. I linked this file after Bootstrap in the base template and other standalone pages, so the same colours can be applied across the whole app. I also added CSS :hover, :focus, and :active rules for buttons, links, and navigation dropdown menus. 
+
+And I was suggested by Codex to use Bootstrap dropdown menus in userbase.html. I grouped the project functions under a Projects menu and the administration functions under an Admin menu. Jinja checks session['user_role'] so the Admin dropdown is only displayed to admin users. I also added a CSS hover rule so the dropdown menu opens when the mouse moves over it on desktop, while it can still be opened by clicking on mobile.
+
+* 2. Prompts:
+- I would like to polish my home page and login page, for login page, I want the whole page to be separated into two parts by a vertical bar? How can I do it?
+
+* How it is used?
+I was suggested by Codex to use CSS to divide the login page into two equal sections using grid-template-columns: 1fr 1fr. I placed the login form on the white left side and the LU-TODO logo and introduction on the dark blue right side. I also added a media query so the two sections change into a vertical layout on mobile devices. For the home page, I reused the same dark blue, white, button, and text styles to keep the design consistent across the app.
