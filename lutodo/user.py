@@ -1,9 +1,5 @@
 
 
-from xmlrpc.client import _Method
-
-from click import confirm
-
 from lutodo import app
 from lutodo import db
 from flask import flash, redirect, render_template, request, session, url_for
@@ -12,8 +8,6 @@ import re
 from pathlib import Path
 from uuid import uuid4
 from werkzeug.utils import secure_filename
-
-import password_hash_generator
 
 # Create an instance of the Bcrypt class, which we'll be using to hash user
 # passwords during login and registration.

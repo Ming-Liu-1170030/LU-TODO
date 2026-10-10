@@ -1,57 +1,11 @@
 {% extends 'userbase.html' %}
-{% block title %}User Administration{% endblock %}
+{% block title %}Users{% endblock %}
 {% set active_page = 'admin_users' %}
 {% block content %}
-
-<section class="container py-5">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}" role="alert">
-                {{ message}}
-            </div>
-        {% endfor %}
-    {% endwith %}
-
-    <h1>User Administration</h1>
-
-    <form action="{{ url_for('admin_users') }}" method="get" class="mt-4 mb-4">
-    <div class="input-group">
-        <input type="search" class="form-control" id="search" name="search" placeholder="Search users by email, name or position..." value="{{ search }}">
-        <button type="submit" class="btn btn-primary">Search</button>
-        <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">Clear</a>
-    </div>
-    </form>
-        {% if users %}
-        <div class="table-responsive mt-4">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Position</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for user in users %}
-                        <tr>
-                            <td>{{ user.first_name }} {{ user.last_name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.position or 'Not provided' }}</td>
-                            <td>{{ user.user_role }}</td>
-                            <td>{{ user.status }}</td>
-                            <td><a href="{{ url_for('admin_user', user_id=user.user_id) }}" class="btn btn-sm btn-primary">View</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% else %}
-        <p class="text-muted mt-4">No users found.</p>
-        {% endif %}
+<section class="content-shell py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" data-auto-dismiss role="alert">{{ message }}</div>{% endfor %}{% endwith %}
+    <header class="page-header"><div><p class="eyebrow">Administration</p><h1 class="page-title">Users</h1><p class="page-subtitle">Review roles, account status and profile details.</p></div></header>
+    <form action="{{ url_for('admin_users') }}" method="get" class="surface-card surface-card--padded mb-4"><div class="input-group"><input type="search" class="form-control" id="search" name="search" placeholder="Search by name, email or position" value="{{ search }}"><button type="submit" class="btn btn-primary">Search</button>{% if search %}<a href="{{ url_for('admin_users') }}" class="btn btn-outline-secondary">Clear</a>{% endif %}</div></form>
+    {% if users %}<div class="surface-card table-card"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Name</th><th>Email</th><th>Position</th><th>Role</th><th>Status</th><th><span class="visually-hidden">Actions</span></th></tr></thead><tbody>{% for user in users %}<tr><td><strong>{{ user.first_name }} {{ user.last_name }}</strong></td><td>{{ user.email }}</td><td>{{ user.position or 'Not provided' }}</td><td><span class="status-badge status-incomplete">{{ user.user_role }}</span></td><td><span class="status-badge {% if user.status == 'active' %}status-complete{% else %}status-overdue{% endif %}">{{ user.status }}</span></td><td class="text-end"><a href="{{ url_for('admin_user', user_id=user.user_id) }}" class="btn btn-sm btn-outline-primary">Manage</a></td></tr>{% endfor %}</tbody></table></div></div>{% else %}<div class="empty-state"><strong>No users found</strong>Try a different name, email address or position.</div>{% endif %}
 </section>
-
-    {% endblock %}
+{% endblock %}

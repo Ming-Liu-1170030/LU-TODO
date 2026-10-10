@@ -1,9 +1,5 @@
 
 
-from asyncio import tasks
-import re
-
-
 from lutodo import app
 from lutodo import db
 from flask import flash, redirect, render_template, request, session, url_for
@@ -41,19 +37,31 @@ def projects():
 
     return render_template('projects.html', projects=project_list)
 
-# Create 'create project' route
+# Create a project on its own page. The legacy POST route is retained so old
+# bookmarks and forms continue to work.
 @app.route('/projects/create', methods=['POST'])
+@app.route('/projects/new', methods=['GET', 'POST'])
 def create_project():
     if 'loggedin' not in session:
         return redirect(url_for('login'))
 
+    if request.method == 'GET':
+        return render_template(
+            'new_project.html',
+            project_name='',
+            description=''
+        )
 
-    project_name = request.form['project_name'].strip()
-    description = request.form['description'].strip()
+    project_name = request.form.get('project_name', '').strip()
+    description = request.form.get('description', '').strip()
     # Check if project input is empty and existing project
     if not project_name:
         flash('Project name cannot be empty.', 'danger')
-        return redirect(url_for('projects'))
+        return render_template(
+            'new_project.html',
+            project_name=project_name,
+            description=description
+        )
     with db.get_cursor() as cursor:
         cursor.execute(
             '''
@@ -66,8 +74,12 @@ def create_project():
         existing_project = cursor.fetchone()
 
         if existing_project is not None:
-            flash('You already have a project with this name', 'danger')
-            return redirect(url_for('projects'))
+            flash('You already have a project with this name.', 'danger')
+            return render_template(
+                'new_project.html',
+                project_name=project_name,
+                description=description
+            )
 
         # Save the project and its description that passed the check
         with db.get_cursor() as cursor:
@@ -75,6 +87,7 @@ def create_project():
                 '''
                 INSERT INTO projects(owner_id, project_name, description)
                 VALUES(%s, %s, %s)
+                RETURNING project_id
                 ''',
                 (
                     session['user_id'],
@@ -82,9 +95,13 @@ def create_project():
                     description or None
                 )
             )
+            new_project = cursor.fetchone()
         flash('Project created successfully.', 'success')
 
-        return redirect(url_for('projects'))
+        return redirect(url_for(
+            'view_project',
+            project_id=new_project['project_id']
+        ))
 
 # Edit project using the project_id
 @app.route('/projects/<int:project_id>/edit', methods=['GET', 'POST'])

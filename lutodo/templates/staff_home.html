@@ -1,17 +1,5 @@
 {% extends 'userbase.html' %}
-
-{% block title %}Staff Home{% endblock %}
-
-{# Set the active page to be highlighted in the navigation bar. #}
+{% block title %}My work{% endblock %}
 {% set active_page = 'home' %}
-
-{% block content %}
-<section class="container py-5 text-center">
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <h1>Staff Home Page</h1>
-            <p class="lead text-muted">Create and share projects, manage tasks, and collaborate with students.</p>
-        </div>
-    </div>
-</section>
-{% endblock %}
+{% set workspace_label = 'Staff workspace' %}
+{% block content %}{% include '_overview.html' %}{% endblock %}

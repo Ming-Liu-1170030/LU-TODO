@@ -1,21 +1,5 @@
 {% extends 'userbase.html' %}
-
-{% block title %}Admin Home{% endblock %}
-
-{# Set the active page to be highlighted in the navigation bar. #}
+{% block title %}My work{% endblock %}
 {% set active_page = 'home' %}
-
-{% block content %}
-<section class="container py-5 text-center">
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <h1>Admin Home Page</h1>
-            <p class="lead text-muted">   Manage LU-TODO users, roles, account status, and shared projects.</p>
-            <div class="mt-4"><a href="{{ url_for('admin_users') }}" class="btn btn-primary">User Administration</a>
-                <a href="{{ url_for('admin_projects') }}" class="btn btn-primary">Manage Shared Projects</a>
-            </div>
-            
-        </div>
-    </div>
-</section>
-{% endblock %}
+{% set workspace_label = 'Administrator workspace' %}
+{% block content %}{% include '_overview.html' %}{% endblock %}

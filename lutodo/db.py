@@ -132,6 +132,42 @@ def get_cursor():
     """
     return get_db().cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
+
+def get_open_tasks_for_user(user_id: int, limit: int = 8):
+    """Return the current user's most relevant incomplete tasks."""
+    with get_cursor() as cursor:
+        cursor.execute(
+            '''
+            SELECT DISTINCT
+                t.task_id,
+                t.project_id,
+                t.task_name,
+                t.priority,
+                t.due_date,
+                p.project_name,
+                CASE
+                    WHEN t.due_date IS NOT NULL
+                         AND t.due_date < CURRENT_DATE
+                    THEN TRUE
+                    ELSE FALSE
+                END AS is_overdue
+            FROM tasks AS t
+            JOIN projects AS p
+                ON p.project_id = t.project_id
+            LEFT JOIN project_members AS pm
+                ON pm.project_id = p.project_id
+            WHERE t.is_complete = FALSE
+              AND (p.owner_id = %s OR pm.user_id = %s)
+            ORDER BY
+                is_overdue DESC,
+                t.due_date ASC NULLS LAST,
+                t.task_id ASC
+            LIMIT %s;
+            ''',
+            (user_id, user_id, limit)
+        )
+        return cursor.fetchall()
+
 def close_db(exception = None):
     """Closes the database connection associated with the current Flask request
     (if any).

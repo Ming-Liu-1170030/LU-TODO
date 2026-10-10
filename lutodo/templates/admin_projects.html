@@ -1,49 +1,10 @@
 {% extends 'userbase.html' %}
-{% block title %}User Administration{% endblock %}
-{% set active_page = 'admin_users' %}
+{% block title %}Shared projects{% endblock %}
+{% set active_page = 'admin_projects' %}
 {% block content %}
-
-<section class="container py-5">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}" role="alert">
-                {{ message}}
-            </div>
-        {% endfor %}
-    {% endwith %}
-
-    <h1 class="mb-4">Shared Projects</h1>
-    {% if shared_projects %}
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th>Project</th>
-                        <th>Description</th>
-                        <th>Owner</th>
-                        <th>Members</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    {% for project in shared_projects %}
-                        <tr>
-                            <td>{{ project.project_name }}</td>
-                            <td>{{ project.description or 'No description' }}</td>
-                            <td>
-                                {{ project.owner_first_name }}
-                                {{ project.owner_last_name }}
-                            </td>
-                            <td>{{ project.member_count }}</td>
-                            <td><a href="{{ url_for('admin_project', project_id=project.project_id) }}" class="btn btn-primary btn-sm">Manage</a></td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p>No shared projects found.</p>
-    {% endif %}
+<section class="content-shell py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" data-auto-dismiss role="alert">{{ message }}</div>{% endfor %}{% endwith %}
+    <header class="page-header"><div><p class="eyebrow">Administration</p><h1 class="page-title">Shared projects</h1><p class="page-subtitle">Review collaboration spaces and manage project ownership.</p></div></header>
+    {% if shared_projects %}<div class="surface-card table-card"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Project</th><th>Description</th><th>Owner</th><th>Members</th><th><span class="visually-hidden">Actions</span></th></tr></thead><tbody>{% for project in shared_projects %}<tr><td><strong>{{ project.project_name }}</strong></td><td>{{ project.description or 'No description' }}</td><td>{{ project.owner_first_name }} {{ project.owner_last_name }}</td><td><span class="status-badge status-incomplete">{{ project.member_count }}</span></td><td class="text-end"><a href="{{ url_for('admin_project', project_id=project.project_id) }}" class="btn btn-sm btn-outline-primary">Manage</a></td></tr>{% endfor %}</tbody></table></div></div>{% else %}<div class="empty-state"><strong>No shared projects</strong>Projects with collaborators will appear here.</div>{% endif %}
 </section>
 {% endblock %}

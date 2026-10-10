@@ -45,6 +45,5 @@ def student_home():
           # requested page.
           return render_template('access_denied.html'), 403
 
-     # The user is logged in with a student account, so render the student
-     # homepage as requested.
-     return render_template('student_home.html')
+     tasks = db.get_open_tasks_for_user(session['user_id'])
+     return render_template('student_home.html', tasks=tasks)

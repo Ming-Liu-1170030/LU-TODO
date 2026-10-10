@@ -1,87 +1,74 @@
-{#
-	This is the base template for pages seen by a logged-in user, and provides
-	the top-level navigation menu.
-
-	Page templates based on this one should specify:
-		- A "title" block containing the page title (e.g. "User Profile")
-		- A "content" block containing the main HTML/Jinja content of the page.
-	
-	Each page should also set the "active_page" variable to control which top-
-	level menu item is highlighted as active (e.g. a homepage template based on
-	this one should include the line):
-		{% set active_page = 'home' %}
-	
-	Currently, the only available options are 'home' and 'profile'. You could
-	choose to continue with this same approach as you add other menu options,
-	using these two as an example, or find your own way to control which menu
-	item is shown as "active".
-#}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>{% block title %}{% endblock %} - LU-TODO</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-		<link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
-	</head>
-	<body>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f3f2f1">
+    <title>{% block title %}{% endblock %} · LU-TODO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body class="shell-body">
+    <div class="product-shell">
+        <aside class="offcanvas-lg offcanvas-start shell-sidebar" tabindex="-1" id="appSidebar" aria-label="Application navigation">
+            <div class="offcanvas-header d-lg-none">
+                <span class="sidebar-brand"><span class="brand-mark" aria-hidden="true">LU</span><span>LU-TODO</span></span>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#appSidebar" aria-label="Close navigation"></button>
+            </div>
 
-		<nav class="navbar navbar-expand-sm navbar-dark bg-primary mb-3">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="/">LU-TODO</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="collapse navbar-collapse" id="navbarSupportedContent">
-					<ul class="navbar-nav me-auto">
-						<li class="nav-item">
-							<a class="nav-link{{' active' if active_page=='home' else ''}}" href="{% if session['user_role'] == 'student' %}{{ url_for('student_home') }}{% elif session['user_role'] == 'staff' %}{{ url_for('staff_home') }}{% elif session['user_role'] == 'admin' %}{{ url_for('admin_home') }}{% endif %}">Home</a>
-						</li>
-						{# Add any new top-level menu items here. #}
-					</ul>
-					<ul class="navbar-nav">
-						{% if session.get('user_role') == 'admin' %}
-							<li class="nav-item dropdown">
-								<a class="nav-link dropdown-toggle{% if active_page in ['admin_users', 'admin_projects'] %} active{% endif %}" 
-								href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
-								<ul class="dropdown-menu">
-									<li>
-										<a class="dropdown-item" href="{{ url_for('admin_users') }}">User Administration</a>
-									</li>
-									<li>
-										<a class="dropdown-item" href="{{ url_for('admin_projects') }}">Manage Shared Projects</a>
-									</li>
-								</ul>
-							</li>
-						{% endif %}
-						<li class="nav-item">
-							<a class="nav-link{{' active' if active_page=='profile' else ''}}" href="{{ url_for('profile') }}">User Profile</a>
-						</li>
-						<li class="nav-item dropdown">
-    						<a class="nav-link dropdown-toggle{{ ' active' if active_page == 'projects' else '' }}"
-								href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Projects</a>
-								<ul class="dropdown-menu">
-									<li>
-										<a class="dropdown-item" href="{{ url_for('projects') }}">View Projects</a>
-									</li>
-    								<li>
-										<a class="dropdown-item"
-										href="{{ url_for('projects') }}#create-project">Create Project</a>
-									</li>
-								</ul>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('logout') }}">Log Out</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</nav>
+            <div class="sidebar-inner">
+                <a class="sidebar-brand d-none d-lg-flex" href="{% if session.get('user_role') == 'student' %}{{ url_for('student_home') }}{% elif session.get('user_role') == 'staff' %}{{ url_for('staff_home') }}{% else %}{{ url_for('admin_home') }}{% endif %}">
+                    <span class="brand-mark" aria-hidden="true">LU</span>
+                    <span>LU-TODO</span>
+                </a>
 
-		<main>
-			{% block content %}{% endblock %}
-		</main>
-	</body>
+                <nav class="sidebar-nav">
+                    <a class="sidebar-link{{ ' active' if active_page == 'home' else '' }}" href="{% if session.get('user_role') == 'student' %}{{ url_for('student_home') }}{% elif session.get('user_role') == 'staff' %}{{ url_for('staff_home') }}{% else %}{{ url_for('admin_home') }}{% endif %}">
+                        <span class="sidebar-icon" aria-hidden="true">⌂</span><span>Overview</span>
+                    </a>
+
+                    <p class="sidebar-label">Workspace</p>
+                    <a class="sidebar-link{{ ' active' if active_page == 'projects' else '' }}" href="{{ url_for('projects') }}">
+                        <span class="sidebar-icon" aria-hidden="true">▤</span><span>Projects</span>
+                    </a>
+                    <a class="sidebar-link{{ ' active' if active_page == 'new_project' else '' }}" href="{{ url_for('create_project') }}">
+                        <span class="sidebar-icon" aria-hidden="true">＋</span><span>New project</span>
+                    </a>
+
+                    {% if session.get('user_role') == 'admin' %}
+                    <p class="sidebar-label">Manage</p>
+                    <a class="sidebar-link{{ ' active' if active_page == 'admin_users' else '' }}" href="{{ url_for('admin_users') }}">
+                        <span class="sidebar-icon" aria-hidden="true">♙</span><span>Users</span>
+                    </a>
+                    <a class="sidebar-link{{ ' active' if active_page == 'admin_projects' else '' }}" href="{{ url_for('admin_projects') }}">
+                        <span class="sidebar-icon" aria-hidden="true">◇</span><span>Shared projects</span>
+                    </a>
+                    {% endif %}
+                </nav>
+
+                <div class="sidebar-account">
+                    <a class="sidebar-link{{ ' active' if active_page == 'profile' else '' }}" href="{{ url_for('profile') }}">
+                        <span class="account-avatar" aria-hidden="true">{{ session.get('email', 'U')[0]|upper }}</span>
+                        <span class="account-copy"><strong>{{ session.get('email', 'Account') }}</strong><small>{{ session.get('user_role', 'user')|title }}</small></span>
+                    </a>
+                    <a class="sidebar-signout" href="{{ url_for('logout') }}">Sign out</a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="shell-content">
+            <header class="mobile-bar d-lg-none">
+                <button class="mobile-menu-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#appSidebar" aria-controls="appSidebar" aria-label="Open navigation">☰</button>
+                <span>LU-TODO</span>
+            </header>
+            <main class="shell-main">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% block scripts %}{% endblock %}
+</body>
 </html>
