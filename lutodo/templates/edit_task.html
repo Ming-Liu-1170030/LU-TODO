@@ -1,49 +1,16 @@
 {% extends 'userbase.html' %}
-{% block title %}Edit Task{% endblock %}
+{% block title %}Edit task{% endblock %}
 {% set active_page = 'projects' %}
 {% block content %}
-
-<section class="container py-5">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}" role="alert">
-                {{ message}}
-            </div>
-        {% endfor %}
-    {% endwith %}
-
-    <h1 class="mb-4">Edit Task</h1>
-    <form action="{{ url_for('edit_task', project_id=project_id, task_id=task_id )}}" method="post">
-        <div class="mb-3">
-            <label for="task_name" class="form-label">Task Name</label>
-            <input type="text" class="form-control" id="task_name" name="task_name" value="{{ task.task_name }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" id="description" name="description" rows="3">{{ task.description or '' }}</textarea>
-        </div>
-        <div class="mb-3">
-            <label for="priority" class="form-label">Priority</label>
-            <select class="form-select" id="priority" name="priority" required>
-                <option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option>
-                <option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option>
-                <option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="due_date" class="form-label">Due Date</label>
-            <input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date or '' }}">
-        </div>
-        <div class="form-check mb-3">
-            <input type="checkbox" class="form-check-input" id="is_complete" name="is_complete" {% if task.is_complete %}checked{% endif %}>
-            <label for="is_complete" class="form-check-label">Complete</label>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-        <a href="{{ url_for('view_project', project_id=project_id )}}" class="btn btn-secondary">Cancel</a>
-        <button type="submit" class="btn btn-danger" formaction="{{ url_for('delete_task', project_id=project_id, task_id=task_id) }}" 
-                formmethod="post" onclick="return confirm('Are you sure you want to delete this task?');">Delete Task</button>
+<section class="content-shell py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" role="alert">{{ message }}</div>{% endfor %}{% endwith %}
+    <header class="page-header"><div><p class="eyebrow">Task settings</p><h1 class="page-title">Edit task</h1><p class="page-subtitle">Clarify the work, adjust its priority or mark it complete.</p></div><a href="{{ url_for('view_project', project_id=project_id) }}" class="btn btn-outline-secondary">Back to project</a></header>
+    <form action="{{ url_for('edit_task', project_id=project_id, task_id=task_id) }}" method="post" class="surface-card surface-card--padded" data-loading>
+        <div class="mb-3"><label for="task_name" class="form-label">Task name</label><input type="text" class="form-control" id="task_name" name="task_name" value="{{ task.task_name }}" maxlength="100" required></div>
+        <div class="mb-3"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="4" maxlength="500">{{ task.description or '' }}</textarea></div>
+        <div class="row g-3 mb-4"><div class="col-md-6"><label for="priority" class="form-label">Priority</label><select class="form-select" id="priority" name="priority" required><option value="low" {% if task.priority == 'low' %}selected{% endif %}>Low</option><option value="medium" {% if task.priority == 'medium' %}selected{% endif %}>Medium</option><option value="high" {% if task.priority == 'high' %}selected{% endif %}>High</option></select></div><div class="col-md-6"><label for="due_date" class="form-label">Due date</label><input type="date" class="form-control" id="due_date" name="due_date" value="{{ task.due_date or '' }}"></div></div>
+        <div class="form-check form-switch mb-4"><input type="checkbox" class="form-check-input" id="is_complete" name="is_complete" {% if task.is_complete %}checked{% endif %}><label for="is_complete" class="form-check-label">Mark this task as complete</label></div>
+        <div class="d-flex flex-wrap justify-content-between gap-3"><div class="d-flex gap-2"><button type="submit" class="btn btn-primary">Save changes</button><a href="{{ url_for('view_project', project_id=project_id) }}" class="btn btn-outline-secondary">Cancel</a></div><button type="submit" class="btn btn-danger" formaction="{{ url_for('delete_task', project_id=project_id, task_id=task_id) }}" formmethod="post" data-no-loading onclick="return confirm('Permanently delete this task?');">Delete task</button></div>
     </form>
-
 </section>
 {% endblock %}

@@ -1,0 +1,33 @@
+{% extends 'userbase.html' %}
+{% block title %}New project{% endblock %}
+{% set active_page = 'new_project' %}
+{% block content %}
+<section class="page-frame page-frame--narrow">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}<div class="alert alert-{{ category }}" role="alert">{{ message }}</div>{% endfor %}
+    {% endwith %}
+
+    <header class="fluent-page-header fluent-page-header--simple">
+        <div>
+            <h1>New project</h1>
+            <p>Create a space for related tasks and shared work.</p>
+        </div>
+    </header>
+
+    <form action="{{ url_for('create_project') }}" method="post" class="editor-form" data-loading>
+        <div class="mb-4">
+            <label for="project_name" class="form-label">Project name</label>
+            <input type="text" class="form-control form-control-lg" id="project_name" name="project_name" value="{{ project_name }}" maxlength="100" placeholder="Enter a project name" autocomplete="off" required autofocus>
+        </div>
+        <div class="mb-4">
+            <label for="description" class="form-label">Description <span class="optional-label">Optional</span></label>
+            <textarea class="form-control" id="description" name="description" rows="5" maxlength="500" placeholder="Add a short description" data-count="#new-project-count">{{ description }}</textarea>
+            <div class="field-meta"><span></span><span id="new-project-count"></span></div>
+        </div>
+        <div class="form-actions">
+            <a href="{{ url_for('projects') }}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Create project</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

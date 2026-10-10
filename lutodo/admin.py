@@ -9,7 +9,8 @@ def admin_home():
           return redirect(url_for('login'))
      elif session['user_role']!='admin':
           return render_template('access_denied.html'), 403
-     return render_template('admin_home.html')
+     tasks = db.get_open_tasks_for_user(session['user_id'])
+     return render_template('admin_home.html', tasks=tasks)
 
 # List and search users.
 @app.route('/admin/users')

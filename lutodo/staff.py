@@ -17,4 +17,5 @@ def staff_home():
      elif session['user_role']!='staff':
           return render_template('access_denied.html'), 403
 
-     return render_template('staff_home.html')
+     tasks = db.get_open_tasks_for_user(session['user_id'])
+     return render_template('staff_home.html', tasks=tasks)
