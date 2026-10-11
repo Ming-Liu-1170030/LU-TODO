@@ -17,8 +17,8 @@
     {% if session['user_role'] in ['staff', 'admin'] and project.owner_id == session['user_id'] %}
     <div class="surface-card surface-card--padded mb-4">
         <div class="d-flex flex-column flex-lg-row justify-content-between gap-4">
-            <div><p class="eyebrow">Collaboration</p><h2 class="section-title">Project members</h2><p class="muted-label mb-0">Invite a user by email or remove an existing collaborator.</p></div>
-            <form action="{{ url_for('add_project_member', project_id=project.project_id) }}" method="post" class="d-flex flex-column flex-sm-row gap-2 flex-grow-1" style="max-width: 540px" data-loading><label for="member_email" class="visually-hidden">Member email</label><input type="email" class="form-control" id="member_email" name="member_email" required placeholder="Member email address"><button type="submit" class="btn btn-primary text-nowrap">Add member</button></form>
+            <div><p class="eyebrow">Members</p><h2 class="section-title">Project members</h2><p class="muted-label mb-0">Add collaborators by email.</p></div>
+            <form action="{{ url_for('add_project_member', project_id=project.project_id) }}" method="post" class="d-flex flex-column flex-sm-row gap-2 flex-grow-1" style="max-width: 540px" data-loading><label for="member_email" class="visually-hidden">Member email</label><input type="email" class="form-control" id="member_email" name="member_email" required placeholder="Email address"><button type="submit" class="btn btn-primary text-nowrap">Add</button></form>
         </div>
         {% if members %}
         <div class="member-grid">
@@ -30,7 +30,7 @@
             </form>
             {% endfor %}
         </div>
-        {% else %}<p class="muted-label mt-3 mb-0">No members have been added to this project.</p>{% endif %}
+        {% else %}<p class="muted-label mt-3 mb-0">No members yet.</p>{% endif %}
     </div>
     {% endif %}
 

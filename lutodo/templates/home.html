@@ -10,40 +10,34 @@
 </head>
 <body class="entry-page">
     <nav class="entry-nav" aria-label="Public navigation">
-        <a href="{{ url_for('root') }}" class="public-brand">
-            <span class="brand-mark" aria-hidden="true">LU</span>
-            <span>LU-TODO</span>
-        </a>
+        <a href="{{ url_for('root') }}" class="public-brand"><span class="brand-mark" aria-hidden="true">LU</span><span>LU-TODO</span></a>
         <a href="{{ url_for('login') }}" class="entry-login">Sign in</a>
     </nav>
 
     <main class="entry-main">
         <section class="entry-copy">
-            <h1>Keep work<br>in order.</h1>
-            <p>A straightforward place to manage university projects, tasks and shared responsibilities.</p>
+            <p class="entry-kicker">Lincoln University</p>
+            <h1>Work,<br>together.</h1>
+            <p>Projects and tasks in one place.</p>
             <div class="entry-actions">
-                <a href="{{ url_for('signup') }}" class="btn btn-primary">Get started</a>
-                <a href="{{ url_for('login') }}" class="entry-text-link">I already have an account</a>
+                <a href="{{ url_for('signup') }}" class="btn btn-primary">Create account</a>
+                <a href="{{ url_for('login') }}" class="entry-text-link">Sign in</a>
             </div>
         </section>
 
-        <section class="todo-preview" aria-label="Example task list">
+        <section class="todo-preview" aria-label="Example project">
             <header class="todo-preview__header">
                 <div><span class="todo-preview__label">Project</span><h2>Research report</h2></div>
                 <span class="todo-preview__count">3 tasks</span>
             </header>
             <div class="todo-preview__list">
-                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Review the project brief</strong><small>Today</small></span></div>
-                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Prepare research notes</strong><small>High priority</small></span></div>
-                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Share the draft with the team</strong><small>Friday</small></span></div>
+                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Review brief</strong><small>Today</small></span></div>
+                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Add research notes</strong><small>High priority</small></span></div>
+                <div class="todo-item"><span class="todo-check" aria-hidden="true"></span><span><strong>Share draft</strong><small>Friday</small></span></div>
             </div>
-            <div class="todo-preview__add"><span aria-hidden="true">＋</span> Add a task</div>
         </section>
     </main>
 
-    <footer class="entry-footer">
-        <span>Student project by Ming (Andy) Liu</span>
-        <span>Lincoln University</span>
-    </footer>
+    <footer class="entry-footer"><span>LU-TODO</span><span>Lincoln University</span></footer>
 </body>
 </html>
