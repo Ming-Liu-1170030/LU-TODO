@@ -98,6 +98,8 @@ LU-TODO/
 ├── scripts/
 │   ├── generate_test_data.py      Development seed-data generator
 │   └── generate_password_hashes.py Optional bcrypt helper
+├── docs/
+│   └── screenshots/               README preview images
 ├── database/
 │   ├── create_database.sql  PostgreSQL schema
 │   └── populate_database.sql Development data and demo accounts
@@ -108,6 +110,16 @@ LU-TODO/
 ## Design notes
 
 The public entry and login screens use a restrained split layout. Authenticated pages use a compact top navigation and content-first layouts. The interface intentionally avoids dashboards filled with decorative cards: the main screens prioritise projects, open tasks and the next available action.
+
+## Screenshots
+
+### Login
+
+![LU-TODO login screen](docs/screenshots/login.png)
+
+### Administrator overview
+
+![LU-TODO administrator overview](docs/screenshots/dashboard.png)
 
 ## Testing and checks
 
