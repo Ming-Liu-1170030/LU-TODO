@@ -225,7 +225,8 @@ for membership in memberships:
 sql_lines.append('')
 sql_lines.append('COMMIT;')
 
-output_path = Path(__file__).with_name('populate_database.sql')
+# Keep generated seed data with the database setup scripts.
+output_path = Path(__file__).resolve().parent.parent / 'database' / 'populate_database.sql'
 
 output_path.write_text('\n'.join(sql_lines) + '\n', encoding='utf-8')
 
