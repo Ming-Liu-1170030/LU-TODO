@@ -1,4 +1,4 @@
-"""This script provides an easy way to run our "Login Example" app.
+"""Local launcher for the LU-TODO Flask application.
 
 There are many ways to run a Flask app, and not all of them require run.py.
 When running locally, you can use any of the following approaches:
@@ -21,12 +21,11 @@ When running locally, you can use any of the following approaches:
         - Click the link to "create a launch.json file".
         - Select "Python Debugger" from the menu that appears.
         - Select "Flask" from the next menu.
-        - Enter "LoginExample\\loginapp" (without the quote marks).
+        - Enter "LU-TODO" as the project folder.
         - Save the new launch.json file.
 
-    - You can run your Flask app directly from the command line. However,
-        you'll need to specify the app to run. For example, to run `loginapp`
-        you'll need to enter `python -m flask --app loginapp run`. This method
+    - You can run the Flask app directly from the command line. For example,
+        you can enter `python -m flask --app lutodo run`. This method
         doesn't use run.py.
         
 On PythonAnywhere and similar WSGI servers, you can do either of the following
@@ -35,8 +34,8 @@ in your WSGI configuration file:
     - Import the `app` object from run.py. For example, in PythonAnywhere's
         WSGI file, set the final line to `from run import app as application`.
 
-    - Import the `app` object directly from the `loginapp` module. For example,
-        in PythonAnywhere's WSGI file, set the final line to `from loginapp
+    - Import the `app` object directly from the `lutodo` package. For example,
+        in a WSGI configuration file, set the final line to `from lutodo
         import app as application`. This method doesn't require run.py.
 
 Because there are so many ways to start a Python/Flask web app, and many of

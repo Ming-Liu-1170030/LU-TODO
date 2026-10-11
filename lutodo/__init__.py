@@ -1,4 +1,4 @@
-# This script runs automatically when our `loginapp` module is first loaded,
+# This module runs automatically when the `lutodo` package is first loaded,
 # and handles all the setup for our Flask app.
 from flask import Flask
 

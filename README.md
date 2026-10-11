@@ -23,7 +23,7 @@ The application was developed as an individual COMP639 project and includes role
 
 ## Demo accounts
 
-These accounts are included by `populate_database.sql` and are intended for local demonstration only.
+These accounts are included by `database/populate_database.sql` and are intended for local demonstration only.
 
 | Role | Email | Password |
 | --- | --- | --- |
@@ -32,6 +32,14 @@ These accounts are included by `populate_database.sql` and are intended for loca
 | Student | `student01@lincolnuni.ac.nz` | `Student01!Pass` |
 
 The seed script also generates additional accounts using the same pattern (`admin02`, `staff02`–`staff10`, and `student02`–`student50`). Do not use these passwords for a public or production deployment.
+
+To regenerate the development dataset after changing the data generator:
+
+```powershell
+python scripts/generate_test_data.py
+```
+
+This overwrites `database/populate_database.sql`, so run it only when you intend to replace the local seed data.
 
 ## Requirements
 
@@ -57,11 +65,11 @@ python -m pip install -r requirements.txt
 Create a database named `lutodo`, then run the schema and development seed data:
 
 ```powershell
-psql -U postgres -d lutodo -f create_database.sql
-psql -U postgres -d lutodo -f populate_database.sql
+psql -U postgres -d lutodo -f database/create_database.sql
+psql -U postgres -d lutodo -f database/populate_database.sql
 ```
 
-`populate_database.sql` clears and repopulates application tables. Use it only for local development or a disposable demo database.
+`database/populate_database.sql` clears and repopulates application tables. Use it only for local development or a disposable demo database.
 
 ### 3. Provide the database password
 
@@ -87,8 +95,12 @@ LU-TODO/
 │   ├── sharing.py       Project-member routes
 │   ├── user.py          Authentication and profile routes
 │   └── admin.py         Administrator routes
-├── create_database.sql  PostgreSQL schema
-├── populate_database.sql Development data and demo accounts
+├── scripts/
+│   ├── generate_test_data.py      Development seed-data generator
+│   └── generate_password_hashes.py Optional bcrypt helper
+├── database/
+│   ├── create_database.sql  PostgreSQL schema
+│   └── populate_database.sql Development data and demo accounts
 ├── run.py               Application entry point
 └── requirements.txt     Python dependencies
 ```
