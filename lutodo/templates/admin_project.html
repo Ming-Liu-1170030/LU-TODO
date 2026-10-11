@@ -2,9 +2,26 @@
 {% block title %}Manage shared project{% endblock %}
 {% set active_page = 'admin_projects' %}
 {% block content %}
-<section class="content-shell py-5">
+<section class="page-frame project-admin-page">
     {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" role="alert">{{ message }}</div>{% endfor %}{% endwith %}
-    <header class="page-header"><div><p class="eyebrow">Shared project</p><h1 class="page-title">{{ project.project_name }}</h1><p class="page-subtitle">Current owner: {{ project.owner_first_name }} {{ project.owner_last_name }}</p></div><a href="{{ url_for('admin_projects') }}" class="btn btn-outline-secondary">Back to shared projects</a></header>
-    <div class="row g-4"><div class="col-lg-7"><form action="{{ url_for('admin_project', project_id=project.project_id) }}" method="post" class="surface-card surface-card--padded" data-loading><p class="eyebrow">Ownership</p><h2 class="section-title">Transfer project</h2><p class="muted-label mb-4">Select a new staff or admin owner for this shared workspace.</p><div class="mb-4"><label for="new_owner_id" class="form-label">New owner</label><select class="form-select" id="new_owner_id" name="new_owner_id" required>{% for owner in possible_owners %}<option value="{{ owner.user_id }}" {% if owner.user_id == project.owner_id %}selected{% endif %}>{{ owner.first_name }} {{ owner.last_name }} — {{ owner.email }} ({{ owner.user_role }})</option>{% endfor %}</select></div><button type="submit" class="btn btn-primary">Change owner</button></form></div><div class="col-lg-5"><form action="{{ url_for('admin_delete_project', project_id=project.project_id) }}" method="post" class="surface-card surface-card--padded" onsubmit="return confirm('Permanently delete this shared project?');"><p class="eyebrow text-danger">Danger zone</p><h2 class="section-title">Delete project</h2><p class="muted-label">This removes the project and its tasks for every member. This action cannot be undone.</p><button type="submit" class="btn btn-danger">Delete project</button></form></div></div>
+    <header class="settings-header">
+        <div>
+            <p class="section-kicker">Shared project</p>
+            <h1>{{ project.project_name }}</h1>
+            <p>Current owner: {{ project.owner_first_name }} {{ project.owner_last_name }}</p>
+        </div>
+        <a href="{{ url_for('admin_projects') }}" class="settings-back">Back to shared projects</a>
+    </header>
+
+    <form action="{{ url_for('admin_project', project_id=project.project_id) }}" method="post" class="project-edit-form ownership-form" data-loading>
+        <div class="setting-field"><p class="setting-label">Ownership</p><h2 class="settings-section-title">Transfer project</h2><p class="settings-help">Select a new staff or admin owner for this shared workspace.</p></div>
+        <div class="setting-field"><label for="new_owner_id" class="form-label">New owner</label><select class="form-select" id="new_owner_id" name="new_owner_id" required>{% for owner in possible_owners %}<option value="{{ owner.user_id }}" {% if owner.user_id == project.owner_id %}selected{% endif %}>{{ owner.first_name }} {{ owner.last_name }} — {{ owner.email }} ({{ owner.user_role }})</option>{% endfor %}</select></div>
+        <div class="settings-actions"><button type="submit" class="btn btn-primary">Change owner</button></div>
+    </form>
+
+    <section class="danger-row" aria-labelledby="admin-delete-project-heading">
+        <div class="danger-row__copy"><p class="setting-label">Project removal</p><h2 id="admin-delete-project-heading">Delete this project</h2><p>This removes the project and its tasks for every member. This cannot be undone.</p></div>
+        <form action="{{ url_for('admin_delete_project', project_id=project.project_id) }}" method="post" onsubmit="return confirm('Permanently delete this shared project?');"><button type="submit" class="btn btn-delete-project">Delete</button></form>
+    </section>
 </section>
 {% endblock %}

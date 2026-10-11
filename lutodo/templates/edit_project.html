@@ -2,13 +2,26 @@
 {% block title %}Edit project{% endblock %}
 {% set active_page = 'projects' %}
 {% block content %}
-<section class="content-shell py-5">
+<section class="page-frame page-frame--narrow project-settings-page">
     {% with messages = get_flashed_messages(with_categories=true) %}{% for category, message in messages %}<div class="alert alert-{{ category }}" role="alert">{{ message }}</div>{% endfor %}{% endwith %}
-    <header class="page-header"><div><p class="eyebrow">Project settings</p><h1 class="page-title">Edit project</h1><p class="page-subtitle">Update how this workspace is presented to its members.</p></div><a href="{{ url_for('view_project', project_id=project.project_id) }}" class="btn btn-outline-secondary">Back to project</a></header>
-    <form action="{{ url_for('edit_project', project_id=project.project_id) }}" method="post" class="surface-card surface-card--padded" data-loading>
-        <div class="mb-3"><label for="project_name" class="form-label">Project name</label><input type="text" class="form-control" id="project_name" name="project_name" value="{{ project.project_name }}" maxlength="100" required></div>
-        <div class="mb-4"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="4" maxlength="500" data-count="#edit-project-count">{{ project.description or '' }}</textarea><div class="field-meta"><span>Describe the intended outcome.</span><span id="edit-project-count"></span></div></div>
-        <div class="d-flex flex-wrap justify-content-between gap-3"><div class="d-flex gap-2"><button type="submit" class="btn btn-primary">Save changes</button><a href="{{ url_for('view_project', project_id=project.project_id) }}" class="btn btn-outline-secondary">Cancel</a></div><button type="submit" class="btn btn-danger" formaction="{{ url_for('delete_project', project_id=project.project_id) }}" data-no-loading onclick="return confirm('Permanently delete this project and its tasks?');">Delete project</button></div>
+    <header class="settings-header">
+        <div>
+            <p class="section-kicker">Project settings</p>
+            <h1>Edit project</h1>
+            <p>Update the name and description members see.</p>
+        </div>
+        <a href="{{ url_for('view_project', project_id=project.project_id) }}" class="settings-back">Back to project</a>
+    </header>
+
+    <form action="{{ url_for('edit_project', project_id=project.project_id) }}" method="post" class="project-edit-form" data-loading>
+        <div class="setting-field"><label for="project_name" class="form-label">Project name</label><input type="text" class="form-control" id="project_name" name="project_name" value="{{ project.project_name }}" maxlength="100" required></div>
+        <div class="setting-field"><label for="description" class="form-label">Description</label><textarea class="form-control" id="description" name="description" rows="4" maxlength="500" data-count="#edit-project-count">{{ project.description or '' }}</textarea><div class="field-meta"><span>A short description helps members understand the purpose.</span><span id="edit-project-count"></span></div></div>
+        <div class="settings-actions"><button type="submit" class="btn btn-primary">Save changes</button><a href="{{ url_for('view_project', project_id=project.project_id) }}" class="btn btn-outline-secondary">Cancel</a></div>
     </form>
+
+    <section class="danger-row" aria-labelledby="delete-project-heading">
+        <div class="danger-row__copy"><p class="setting-label">Project removal</p><h2 id="delete-project-heading">Delete this project</h2><p>This removes the project and its tasks for every member. This cannot be undone.</p></div>
+        <form action="{{ url_for('delete_project', project_id=project.project_id) }}" method="post"><button type="submit" class="btn btn-delete-project" data-no-loading onclick="return confirm('Permanently delete this project and its tasks?');">Delete</button></form>
+    </section>
 </section>
 {% endblock %}

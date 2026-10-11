@@ -13,9 +13,9 @@
         <section class="auth-form-side">
             <div class="auth-form-wrap">
                 <a href="{{ url_for('root') }}" class="auth-back"><span class="brand-mark" aria-hidden="true">LU</span><span>LU-TODO</span></a>
-                <p class="eyebrow">Welcome back</p>
-                <h1 class="auth-title">Log in to your workspace</h1>
-                <p class="auth-intro">Pick up your projects and tasks where you left them.</p>
+                <p class="eyebrow">Account access</p>
+                <h1 class="auth-title">Sign in</h1>
+                <p class="auth-intro">Use your LU-TODO account.</p>
 
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% for category, message in messages %}<div class="alert alert-{{ category }}" role="alert">{{ message }}</div>{% endfor %}
@@ -41,12 +41,11 @@
                 <p class="auth-switch">New to LU-TODO? <a href="{{ url_for('signup') }}">Create an account</a></p>
             </div>
         </section>
-        <aside class="auth-visual" aria-label="Product benefits">
+        <aside class="auth-visual" aria-label="LU-TODO overview">
             <div class="auth-visual-copy">
-                <p class="auth-visual-kicker">Less coordination. More progress.</p>
-                <h2>Your work, priorities and team in one calm space.</h2>
-                <p>Designed to keep university projects organised without making project management feel like another assignment.</p>
-                <ul class="auth-points"><li>Clear priorities and due dates</li><li>Shared projects with visible ownership</li><li>Role-based access for students and staff</li></ul>
+                <p class="auth-visual-kicker">LU-TODO</p>
+                <h2>Projects in one place.</h2>
+                <p>Tasks, owners and due dates, kept together.</p>
             </div>
         </aside>
     </main>
